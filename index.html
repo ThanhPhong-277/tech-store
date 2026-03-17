@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Trang chủ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header sẽ được load bằng JS hoặc viết trực tiếp -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">TechStore</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Trang chủ</a></li>
+                    <li><a href="products.html">Sản phẩm</a></li>
+                    <li><a href="my-orders.html">Đơn hàng</a></li>
+                    <li><a href="cart.html">Giỏ hàng <span id="cart-count" class="cart-count">0</span></a></li>
+                    <li class="admin-only" style="display: none;"><a href="admin.html">Quản trị</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <div id="user-info" style="display: none;">
+                    <span id="username-display"></span>
+                    <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
+                </div>
+                <div id="guest-buttons">
+                    <a href="login.html" class="btn btn-login">Đăng nhập</a>
+                    <a href="register.html" class="btn btn-register">Đăng ký</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Banner chúc mừng năm mới (popup) -->
+        <div id="newyear-popup" class="popup" style="display: none;">
+            <div class="popup-content">
+                <span class="close-popup">&times;</span>
+                <h2>Chúc mừng năm mới!</h2>
+                <p>Lê Hà Thanh Phong - 2274802010651</p>
+            </div>
+        </div>
+
+        <section class="hero">
+            <div class="container">
+                <h1>Chào mừng đến với TechStore</h1>
+                <p>Khám phá sản phẩm công nghệ mới nhất</p>
+                <a href="products.html" class="btn btn-primary">Mua sắm ngay</a>
+            </div>
+        </section>
+
+        <section class="featured-products">
+            <div class="container">
+                <h2>Sản phẩm nổi bật</h2>
+                <div class="product-grid" id="featured-products"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 TechStore. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hiển thị popup chúc mừng năm mới
+            showNewYearPopup();
+            // Tải sản phẩm nổi bật
+            loadFeaturedProducts();
+        });
+    </script>
+</body>
+</html>

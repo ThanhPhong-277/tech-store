@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Quản lý đơn hàng</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">TechStore</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="products.html">Sản phẩm</a></li>
+                    <li class="user-only" style="display: none;"><a href="my-orders.html">Đơn hàng</a></li>
+                    <li><a href="cart.html">Giỏ hàng <span id="cart-count" class="cart-count">0</span></a></li>
+                    <li class="admin-only" style="display: none;"><a href="admin-products.html">QL Sản phẩm</a></li>
+                    <li class="admin-only" style="display: none;"><a href="admin-orders.html" class="active">QL Đơn hàng</a></li>
+                    <li class="admin-only" style="display: none;"><a href="admin-vouchers.html">QL Voucher</a></li>
+                    <li class="admin-only" style="display: none;"><a href="admin-members.html">QL Thành viên</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <div id="user-info" style="display: none;">
+                    <span id="username-display"></span>
+                    <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
+                </div>
+                <div id="guest-buttons">
+                    <a href="login.html" class="btn btn-login">Đăng nhập</a>
+                    <a href="register.html" class="btn btn-register">Đăng ký</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">Quản lý đơn hàng</h1>
+
+        <div class="orders-filter">
+            <button class="filter-btn active" data-status="all">Tất cả</button>
+            <button class="filter-btn" data-status="pending">Chờ xử lý</button>
+            <button class="filter-btn" data-status="processing">Đang xử lý</button>
+            <button class="filter-btn" data-status="approved">Đã duyệt</button>
+            <button class="filter-btn" data-status="rejected">Từ chối</button>
+            <button class="filter-btn" data-status="cancelled">Đã hủy</button>
+            <button class="filter-btn" data-status="completed">Hoàn thành</button>
+        </div>
+
+        <table class="table" id="admin-orders-table">
+            <thead>
+                <tr>
+                    <th>Mã ĐH</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày đặt</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Giao hàng</th>
+                    <th>Thanh toán</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="admin-orders-list"></tbody>
+        </table>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 TechStore. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin-orders.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!isAdmin()) {
+                window.location.href = 'index.html';
+                return;
+            }
+            loadAdminOrders();
+            updateCartCount();
+        });
+    </script>
+</body>
+</html>

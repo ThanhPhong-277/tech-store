@@ -1,0 +1,85 @@
+/* cart.css */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-bottom: 2rem;
+}
+.cart-table th {
+    background: var(--light-gray);
+    padding: 0.75rem;
+}
+.cart-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--light-gray);
+    vertical-align: middle;
+}
+.cart-product {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.cart-product img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.375rem;
+}
+.cart-quantity {
+    width: 80px;
+}
+.shipping-form {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.delivery-options {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+.voucher-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.voucher-input {
+    display: flex;
+    gap: 1rem;
+}
+.applied-voucher {
+    background: #e6f7e6;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    margin-top: 1rem;
+}
+.cart-total {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+}
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--light-gray);
+}
+.total-row.final {
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-bottom: none;
+}
+.discount {
+    color: var(--success-color);
+}
+.btn-block {
+    width: 100%;
+}

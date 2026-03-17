@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Quản trị hệ thống</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header chính với các link điều hướng -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">TechStore</a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="products.html">Sản phẩm</a></li>
+                    <li><a href="my-orders.html">Đơn hàng</a></li>
+                    <li><a href="cart.html">Giỏ hàng <span id="cart-count" class="cart-count">0</span></a></li>
+                    <li><a href="admin.html" class="active">Quản trị</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <div id="user-info" style="display: none;">
+                    <span id="username-display"></span>
+                    <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
+                </div>
+                <div id="guest-buttons" style="display: none;">
+                    <a href="login.html" class="btn btn-login">Đăng nhập</a>
+                    <a href="register.html" class="btn btn-register">Đăng ký</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-wrapper">
+        <!-- Sidebar - Panel trái -->
+        <div class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Tổng quan</span>
+                </div>
+                <div class="menu-item" data-section="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Thống kê KPI</span>
+                </div>
+                <div class="menu-item" data-section="products">
+                    <i class="fas fa-box"></i>
+                    <span>Quản lý sản phẩm</span>
+                </div>
+                <div class="menu-item" data-section="orders">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Quản lý đơn hàng</span>
+                </div>
+                <div class="menu-item" data-section="vouchers">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Quản lý voucher</span>
+                </div>
+                <div class="menu-item" data-section="members">
+                    <i class="fas fa-users"></i>
+                    <span>Quản lý thành viên</span>
+                </div>
+                <div class="menu-item" data-section="stores">
+                    <i class="fas fa-store"></i>
+                    <span>Quản lý cửa hàng</span>
+                </div>
+                <div class="menu-item" data-section="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Cài đặt</span>
+                </div>
+                <div class="menu-item logout-btn" id="admin-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Đăng xuất</span>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <div class="admin-info">
+                    <i class="fas fa-user-shield"></i>
+                    <span id="admin-name">Admin</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content - Phần nội dung bên phải -->
+        <div class="admin-main">
+            <!-- Header -->
+            <div class="admin-header">
+                <h1 id="page-title">Tổng quan</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline" id="refresh-data">
+                        <i class="fas fa-sync-alt"></i> Làm mới
+                    </button>
+                </div>
+            </div>
+
+            <!-- Nội dung các section -->
+            <div class="admin-content">
+                <!-- Dashboard -->
+                <div id="dashboard-section" class="admin-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Tổng sản phẩm</h3>
+                                <p id="total-products">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Đơn hàng hôm nay</h3>
+                                <p id="today-orders">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Thành viên</h3>
+                                <p id="total-members">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Doanh thu tháng</h3>
+                                <p id="monthly-revenue">0₫</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <h3>Đơn hàng gần đây</h3>
+                            <div id="recent-orders-list" class="recent-list"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Sản phẩm sắp hết hàng</h3>
+                            <div id="low-stock-list" class="recent-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thống kê KPI - Analytics Section (THÊM MỚI) -->
+                <div id="analytics-section" class="admin-section">
+                    <div class="section-header">
+                        <h2>Thống kê KPI - Phân tích dữ liệu</h2>
+                        <div class="header-actions">
+                            <div class="date-filter">
+                                <select id="time-filter" class="form-control">
+                                    <option value="today">Hôm nay</option>
+                                    <option value="yesterday">Hôm qua</option>
+                                    <option value="week" selected>7 ngày qua</option>
+                                    <option value="month">30 ngày qua</option>
+                                    <option value="month-current">Tháng này</option>
+                                    <option value="month-last">Tháng trước</option>
+                                    <option value="year">Năm nay</option>
+                                    <option value="custom">Tùy chọn</option>
+                                </select>
+                            </div>
+                            <div id="custom-date-range" style="display: none; gap: 0.5rem;">
+                                <input type="date" id="start-date" class="form-control">
+                                <input type="date" id="end-date" class="form-control">
+                                <button class="btn btn-primary" id="apply-custom-range">Áp dụng</button>
+                            </div>
+                            <button class="btn btn-success" id="export-excel">
+                                <i class="fas fa-file-excel"></i> Xuất Excel
+                            </button>
+                        </div>
+                    </div>
+                
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon revenue">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3>Tổng doanh thu</h3>
+                                <p id="total-revenue">0₫</p>
+                                <span id="revenue-change" class="trend"></span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon orders">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3>Tổng đơn hàng</h3>
+                                <p id="total-orders">0</p>
+                                <span id="orders-change" class="trend"></span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon customers">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3>Tổng khách hàng</h3>
+                                <p id="total-customers">0</p>
+                                <span id="customers-change" class="trend"></span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon new-customers">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3>Khách hàng mới</h3>
+                                <p id="new-customers">0</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon returning">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3>Khách quay lại</h3>
+                                <p id="returning-customers">0</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon aov">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3>Giá trị TB đơn hàng</h3>
+                                <p id="average-order-value">0₫</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon products-sold">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3>Sản phẩm đã bán</h3>
+                                <p id="total-products-sold">0</p>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon conversion">
+                                <i class="fas fa-percent"></i>
+                            </div>
+                            <div class="kpi-info">
+                                <h3>Tỉ lệ chuyển đổi</h3>
+                                <p id="conversion-rate">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Biểu đồ dòng 1 -->
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <h3>Doanh thu theo thời gian</h3>
+                            <div class="chart-container">
+                                <canvas id="revenue-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Đơn hàng theo thời gian</h3>
+                            <div class="chart-container">
+                                <canvas id="orders-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Biểu đồ dòng 2 -->
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <h3>Doanh thu theo danh mục</h3>
+                            <div class="chart-container">
+                                <canvas id="category-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Top sản phẩm bán chạy</h3>
+                            <div class="chart-container">
+                                <canvas id="top-products-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Biểu đồ dòng 3 -->
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <h3>Khách hàng mới vs Khách hàng quay lại</h3>
+                            <div class="chart-container">
+                                <canvas id="customer-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Thống kê nhanh</h3>
+                            <div class="quick-stats">
+                                <div class="stat-item">
+                                    <span>Đơn hàng hoàn thành:</span>
+                                    <strong id="completed-orders">0</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Đơn hàng đang xử lý:</span>
+                                    <strong id="pending-orders">0</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Đơn hàng hủy:</span>
+                                    <strong id="cancelled-orders">0</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Doanh thu trung bình/ngày:</span>
+                                    <strong id="avg-daily-revenue">0₫</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Sản phẩm tồn kho:</span>
+                                    <strong id="total-stock">0</strong>
+                                </div>
+                                <div class="stat-item">
+                                    <span>Sản phẩm sắp hết:</span>
+                                    <strong id="low-stock-count">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Bảng dữ liệu chi tiết -->
+                    <div class="tables-section">
+                        <div class="table-container">
+                            <h3>Đơn hàng gần đây</h3>
+                            <table class="table" id="recent-orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã ĐH</th>
+                                        <th>Khách hàng</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ngày đặt</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-orders-list"></tbody>
+                            </table>
+                        </div>
+                    
+                        <div class="table-container">
+                            <h3>Top khách hàng</h3>
+                            <table class="table" id="top-customers-table">
+                                <thead>
+                                    <tr>
+                                        <th>Khách hàng</th>
+                                        <th>Số đơn hàng</th>
+                                        <th>Tổng chi tiêu</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-customers-list"></tbody>
+                            </table>
+                        </div>
+                    
+                        <div class="table-container">
+                            <h3>Top sản phẩm bán chạy</h3>
+                            <table class="table" id="top-products-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th>Danh mục</th>
+                                        <th>Đã bán</th>
+                                        <th>Doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-products-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quản lý sản phẩm -->
+                <div id="products-section" class="admin-section">
+                    <div class="section-header">
+                        <h2>Quản lý sản phẩm</h2>
+                        <button class="btn btn-primary" id="add-product-btn">
+                            <i class="fas fa-plus"></i> Thêm sản phẩm
+                        </button>
+                    </div>
+
+                    <div id="product-form-container" style="display: none;" class="form-container">
+                        <h3 id="form-title">Thêm sản phẩm mới</h3>
+                        <form id="product-form" class="admin-form">
+                            <input type="hidden" id="product-id">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Tên sản phẩm *</label>
+                                    <input type="text" id="product-name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Danh mục *</label>
+                                    <select id="product-category" class="form-control" required>
+                                        <option value="">Chọn danh mục</option>
+                                        <option value="laptop">Laptop Gaming</option>
+                                        <option value="monitor">Màn hình Gaming</option>
+                                        <option value="keyboard">Bàn phím Gaming</option>
+                                        <option value="mouse">Chuột Gaming</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Giá (VNĐ) *</label>
+                                    <input type="number" id="product-price" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tồn kho *</label>
+                                    <input type="number" id="product-stock" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Mô tả *</label>
+                                <textarea id="product-description" class="form-control" rows="4" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Màu sắc (cách nhau bằng dấu phẩy)</label>
+                                <input type="text" id="product-colors" class="form-control" placeholder="Đen, Trắng, Xám">
+                            </div>
+                            <div class="form-group">
+                                <label>URL hình ảnh *</label>
+                                <input type="url" id="product-image" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Cửa hàng có sẵn</label>
+                                <select id="product-stores" class="form-control" multiple>
+                                    <!-- Sẽ được load từ dữ liệu -->
+                                </select>
+                                <small>Giữ Ctrl để chọn nhiều</small>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="submit-product">Lưu</button>
+                                <button type="button" class="btn btn-outline" id="cancel-product-form">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table" id="products-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Giá</th>
+                                    <th>Tồn kho</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quản lý đơn hàng -->
+                <div id="orders-section" class="admin-section">
+                    <div class="section-header">
+                        <h2>Quản lý đơn hàng</h2>
+                    </div>
+
+                    <div class="filter-bar">
+                        <button class="filter-btn active" data-status="all">Tất cả</button>
+                        <button class="filter-btn" data-status="pending">Chờ xử lý</button>
+                        <button class="filter-btn" data-status="processing">Đang xử lý</button>
+                        <button class="filter-btn" data-status="approved">Đã duyệt</button>
+                        <button class="filter-btn" data-status="rejected">Từ chối</button>
+                        <button class="filter-btn" data-status="cancelled">Đã hủy</button>
+                        <button class="filter-btn" data-status="completed">Hoàn thành</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table" id="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã ĐH</th>
+                                    <th>Khách hàng</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Trạng thái</th>
+                                    <th>Giao hàng</th>
+                                    <th>Thanh toán</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quản lý voucher -->
+                <div id="vouchers-section" class="admin-section">
+                    <div class="section-header">
+                        <h2>Quản lý voucher</h2>
+                        <button class="btn btn-primary" id="add-voucher-btn">
+                            <i class="fas fa-plus"></i> Thêm voucher
+                        </button>
+                    </div>
+
+                    <div id="voucher-form-container" style="display: none;" class="form-container">
+                        <h3 id="voucher-form-title">Thêm voucher mới</h3>
+                        <form id="voucher-form" class="admin-form">
+                            <input type="hidden" id="voucher-id">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Mã voucher *</label>
+                                    <input type="text" id="voucher-code" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Loại giảm giá *</label>
+                                    <select id="voucher-type" class="form-control" required>
+                                        <option value="percent">Phần trăm (%)</option>
+                                        <option value="fixed">Số tiền cố định</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Giá trị *</label>
+                                    <input type="number" id="voucher-value" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Đơn tối thiểu</label>
+                                    <input type="number" id="voucher-min-order" class="form-control" value="0">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Ngày hết hạn</label>
+                                    <input type="date" id="voucher-expiry" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label>Trạng thái</label>
+                                    <select id="voucher-active" class="form-control">
+                                        <option value="true">Hoạt động</option>
+                                        <option value="false">Vô hiệu</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                                <button type="button" class="btn btn-outline" id="cancel-voucher-form">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table" id="vouchers-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Mã</th>
+                                    <th>Giá trị</th>
+                                    <th>Đơn tối thiểu</th>
+                                    <th>Hạn sử dụng</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vouchers-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quản lý thành viên -->
+                <div id="members-section" class="admin-section">
+                    <div class="section-header">
+                        <h2>Quản lý thành viên</h2>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table" id="members-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên đăng nhập</th>
+                                    <th>Email</th>
+                                    <th>Cấp thành viên</th>
+                                    <th>Level</th>
+                                    <th>Số sản phẩm đã mua</th>
+                                    <th>Tổng chi tiêu</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="members-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quản lý cửa hàng -->
+                <div id="stores-section" class="admin-section">
+                    <div class="section-header">
+                        <h2>Quản lý cửa hàng</h2>
+                        <button class="btn btn-primary" id="add-store-btn">
+                            <i class="fas fa-plus"></i> Thêm cửa hàng
+                        </button>
+                    </div>
+
+                    <div id="store-form-container" style="display: none;" class="form-container">
+                        <h3 id="store-form-title">Thêm cửa hàng mới</h3>
+                        <form id="store-form" class="admin-form">
+                            <input type="hidden" id="store-id">
+                            <div class="form-group">
+                                <label>Tên cửa hàng *</label>
+                                <input type="text" id="store-name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Địa chỉ *</label>
+                                <input type="text" id="store-address" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Số điện thoại *</label>
+                                <input type="tel" id="store-phone" class="form-control" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                                <button type="button" class="btn btn-outline" id="cancel-store-form">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table" id="stores-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên cửa hàng</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Số sản phẩm</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stores-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cài đặt -->
+                <div id="settings-section" class="admin-section">
+                    <h2>Cài đặt hệ thống</h2>
+                    <p>Đang phát triển...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal xem chi tiết đơn hàng -->
+    <div id="order-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="order-detail-content"></div>
+        </div>
+    </div>
+
+    <!-- Thêm Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<!-- Scripts -->
+<script src="js/utils.js"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>
+
