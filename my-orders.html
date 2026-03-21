@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechStore - Đơn hàng của tôi</title>
+    <title>ROG TechStore - Đơn hàng của tôi</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/notifications.css">
@@ -13,22 +13,18 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <a href="index.html">TechStore</a>
+                <a href="index.html"><img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="Logo" class="logo-img"><span class="logo-text">ROG TechStore</span></a>
             </div>
             <nav class="main-nav">
                 <ul>
                     <li><a href="index.html">Trang chủ</a></li>
                     <li><a href="products.html">Sản phẩm</a></li>
+                    <li><a href="news.html">Tin tức</a></li>
                     <li><a href="my-orders.html" class="active">Đơn hàng</a></li>
                     <li><a href="cart.html">Giỏ hàng <span id="cart-count" class="cart-count">0</span></a></li>
-                    <li class="admin-only" style="display: none;"><a href="admin.html">Quản trị</a></li>
                 </ul>
             </nav>
             <div class="auth-buttons">
-                <div id="user-info" style="display: none;">
-                    <span id="username-display"></span>
-                    <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
-                </div>
                 <div id="guest-buttons">
                     <a href="login.html" class="btn btn-login">Đăng nhập</a>
                     <a href="register.html" class="btn btn-register">Đăng ký</a>
@@ -37,12 +33,23 @@
         </div>
     </header>
 
-    <main class="container">
-        <h1 class="page-title">Đơn hàng của bạn</h1>
+    <main class="container orders-page">
+        <section class="orders-hero scroll-reveal">
+            <div class="orders-hero-content">
+                <div class="orders-hero-title">
+                    <i class="fa-solid fa-receipt"></i>
+                    <h1>Đơn hàng của bạn</h1>
+                </div>
+                <p>Theo dõi trạng thái đơn hàng, xem chi tiết và quản lý đơn nhanh chóng.</p>
+            </div>
+            <a class="orders-hero-cta" href="products.html">Tiếp tục mua sắm</a>
+        </section>
 
         <div id="not-login-message" class="message info" style="display: none;">
             Vui lòng <a href="login.html">đăng nhập</a> để xem đơn hàng của bạn.
         </div>
+
+        <section class="orders-stats scroll-reveal" id="orders-stats" style="display: none;"></section>
 
         <div class="orders-filter" id="orders-filter" style="display: none;">
             <button class="filter-btn active" data-status="all">Tất cả</button>
@@ -59,7 +66,45 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 TechStore. All rights reserved.</p>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="ROG Logo" class="footer-logo">
+                        <span class="footer-brand-name">TechStore</span>
+                    </div>
+                    <p class="footer-desc">Cửa hàng chuyên hệ sinh thái TechStore: laptop, màn hình, bàn phím, chuột và âm thanh gaming.</p>
+                    <div class="footer-social">
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i><span>Instagram: @techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i><span>TikTok: @techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook: TechStore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-comment-dots"></i><span>Zalo: 0901 234 567</span></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Chi nhánh</h3>
+                    <ul class="footer-list">
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN TP.HCM: 123 Nguyễn Huệ, Q.1</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Hà Nội: 45 Trần Duy Hưng, Cầu Giấy</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Đà Nẵng: 88 Bạch Đằng, Hải Châu</span></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Nhận thông báo</h3>
+                    <p class="footer-desc">Điền email để nhận thông báo sản phẩm mới, sự kiện và ưu đãi ROG.</p>
+                    <form class="newsletter-form" data-newsletter="true">
+                        <input class="newsletter-input" type="email" name="email" placeholder="Email của bạn" required>
+                        <button class="newsletter-btn" type="submit">Đăng ký</button>
+                    </form>
+                    <ul class="footer-list footer-contact">
+                        <li class="footer-item"><i class="fa-solid fa-phone"></i><a class="footer-link" href="tel:0901234567">Hotline: 0901 234 567</a></li>
+                        <li class="footer-item"><i class="fa-solid fa-envelope"></i><a class="footer-link" href="mailto:rog.techstore@gmail.com">Email: rog.techstore@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 ROG TechStore. All rights reserved.</span>
+                <span>Giờ mở cửa: 09:00 - 21:30 (T2 - CN)</span>
+            </div>
         </div>
     </footer>
 

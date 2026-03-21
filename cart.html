@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechStore - Giỏ hàng</title>
+    <title>Giỏ hàng - ROG TechStore</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/cart.css">
@@ -14,22 +14,22 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <a href="index.html">TechStore</a>
+                <a href="index.html"><img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="Logo" class="logo-img"><span class="logo-text">TechStore</span></a>
             </div>
             <nav class="main-nav">
                 <ul>
                     <li><a href="index.html">Trang chủ</a></li>
                     <li><a href="products.html">Sản phẩm</a></li>
-                    <li><a href="my-orders.html">Đơn hàng</a></li>
+                    <li><a href="news.html">Tin tức</a></li>
                     <li><a href="cart.html" class="active">Giỏ hàng <span id="cart-count" class="cart-count">0</span></a></li>
-                    <li class="admin-only" style="display: none;"><a href="admin.html">Quản trị</a></li>
                 </ul>
             </nav>
+            <div class="header-search" data-site-search data-search-mode="redirect">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="site-search-input" type="text" placeholder="Tìm sản phẩm..." autocomplete="off">
+                <div class="search-suggest" style="display: none;"></div>
+            </div>
             <div class="auth-buttons">
-                <div id="user-info" style="display: none;">
-                    <span id="username-display"></span>
-                    <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
-                </div>
                 <div id="guest-buttons">
                     <a href="login.html" class="btn btn-login">Đăng nhập</a>
                     <a href="register.html" class="btn btn-register">Đăng ký</a>
@@ -45,9 +45,64 @@
         <div id="cart-total" class="cart-total"></div>
     </main>
 
+    <div class="order-success-overlay" id="order-success-overlay" style="display: none;"></div>
+    <div class="order-success-modal" id="order-success-modal" style="display: none;">
+        <div class="order-success-icon">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h2>Đặt hàng thành công!</h2>
+        <p>Đơn hàng của bạn đã được ghi nhận. Bạn muốn đi đâu tiếp?</p>
+        <div class="order-success-actions">
+            <button type="button" class="btn btn-outline" id="order-success-home">
+                <i class="fa-solid fa-house"></i> Về trang chủ
+            </button>
+            <button type="button" class="btn btn-primary" id="order-success-orders">
+                <i class="fa-solid fa-receipt"></i> Xem đơn hàng
+            </button>
+        </div>
+    </div>
+
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 TechStore. All rights reserved.</p>
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="ROG Logo" class="footer-logo">
+                        <span class="footer-brand-name">ROG TechStore</span>
+                    </div>
+                    <p class="footer-desc">Cửa hàng chuyên hệ sinh thái ASUS ROG: laptop, màn hình, bàn phím, chuột và âm thanh gaming.</p>
+                    <div class="footer-social">
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i><span>Instagram: @rog.techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i><span>TikTok: @rog.techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook: ROG TechStore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-comment-dots"></i><span>Zalo: 0901 234 567</span></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Chi nhánh</h3>
+                    <ul class="footer-list">
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN TP.HCM: 123 Nguyễn Huệ, Q.1</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Hà Nội: 45 Trần Duy Hưng, Cầu Giấy</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Đà Nẵng: 88 Bạch Đằng, Hải Châu</span></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Nhận thông báo</h3>
+                    <p class="footer-desc">Điền email để nhận thông báo sản phẩm mới, sự kiện và ưu đãi ROG.</p>
+                    <form class="newsletter-form" data-newsletter="true">
+                        <input class="newsletter-input" type="email" name="email" placeholder="Email của bạn" required>
+                        <button class="newsletter-btn" type="submit">Đăng ký</button>
+                    </form>
+                    <ul class="footer-list footer-contact">
+                        <li class="footer-item"><i class="fa-solid fa-phone"></i><a class="footer-link" href="tel:0901234567">Hotline: 0901 234 567</a></li>
+                        <li class="footer-item"><i class="fa-solid fa-envelope"></i><a class="footer-link" href="mailto:rog.techstore@gmail.com">Email: rog.techstore@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 ROG TechStore. All rights reserved.</span>
+                <span>Giờ mở cửa: 09:00 - 21:30 (T2 - CN)</span>
+            </div>
         </div>
     </footer>
 
@@ -56,6 +111,7 @@
     <script src="js/auth.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/vouchers.js"></script>
+    <script src="js/search.js"></script>
     <script src="js/provinces.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

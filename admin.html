@@ -15,22 +15,19 @@
     <header class="header">
         <div class="container">
             <div class="logo">
-                <a href="index.html">TechStore</a>
+                <a href="index.html"><img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="Logo" class="logo-img"><span class="logo-text">TechStore</span></a>
             </div>
             <nav class="main-nav">
                 <ul>
                     <li><a href="index.html">Trang chủ</a></li>
                     <li><a href="products.html">Sản phẩm</a></li>
+                    <li><a href="news.html">Tin tức</a></li>
                     <li><a href="my-orders.html">Đơn hàng</a></li>
                     <li><a href="cart.html">Giỏ hàng <span id="cart-count" class="cart-count">0</span></a></li>
                     <li><a href="admin.html" class="active">Quản trị</a></li>
                 </ul>
             </nav>
             <div class="auth-buttons">
-                <div id="user-info" style="display: none;">
-                    <span id="username-display"></span>
-                    <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
-                </div>
                 <div id="guest-buttons" style="display: none;">
                     <a href="login.html" class="btn btn-login">Đăng nhập</a>
                     <a href="register.html" class="btn btn-register">Đăng ký</a>
@@ -43,7 +40,7 @@
         <!-- Sidebar - Panel trái -->
         <div class="admin-sidebar">
             <div class="sidebar-header">
-                <h2>Admin Panel</h2>
+                <h2>Trang Quản Trị</h2>
             </div>
             <div class="sidebar-menu">
                 <div class="menu-item" data-section="dashboard">
@@ -73,6 +70,10 @@
                 <div class="menu-item" data-section="stores">
                     <i class="fas fa-store"></i>
                     <span>Quản lý cửa hàng</span>
+                </div>
+                <div class="menu-item" data-section="news">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Quản lý tin tức</span>
                 </div>
                 <div class="menu-item" data-section="settings">
                     <i class="fas fa-cog"></i>
@@ -411,6 +412,7 @@
                                         <option value="monitor">Màn hình Gaming</option>
                                         <option value="keyboard">Bàn phím Gaming</option>
                                         <option value="mouse">Chuột Gaming</option>
+                                        <option value="headphone">Tai nghe Gaming</option>
                                     </select>
                                 </div>
                             </div>
@@ -651,6 +653,56 @@
                     </div>
                 </div>
 
+                <!-- Quản lý tin tức -->
+                <div id="news-section" class="admin-section">
+                    <div class="section-header">
+                        <h2>Quản lý tin tức</h2>
+                        <button class="btn btn-primary" id="add-news-btn">
+                            <i class="fas fa-plus"></i> Thêm bài viết
+                        </button>
+                    </div>
+
+                    <div id="news-form-container" style="display: none;" class="form-container">
+                        <h3 id="news-form-title">Thêm bài viết mới</h3>
+                        <form id="news-form" class="admin-form">
+                            <input type="hidden" id="news-id">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Chủ đề *</label>
+                                    <input type="text" id="news-title" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>URL hình ảnh *</label>
+                                    <input type="url" id="news-image" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Nội dung *</label>
+                                <textarea id="news-content" class="form-control" rows="8" required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Lưu</button>
+                                <button type="button" class="btn btn-outline" id="cancel-news-form">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table" id="news-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Chủ đề</th>
+                                    <th>Ngày đăng</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="news-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Cài đặt -->
                 <div id="settings-section" class="admin-section">
                     <h2>Cài đặt hệ thống</h2>
@@ -670,6 +722,50 @@
 
     <!-- Thêm Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="ROG Logo" class="footer-logo">
+                        <span class="footer-brand-name">TechStore</span>
+                    </div>
+                    <p class="footer-desc">Cửa hàng chuyên hệ sinh thái TechStore: laptop, màn hình, bàn phím, chuột và âm thanh gaming.</p>
+                    <div class="footer-social">
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i><span>Instagram: @techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i><span>TikTok: @techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook: TechStore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-comment-dots"></i><span>Zalo: 0901 234 567</span></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Chi nhánh</h3>
+                    <ul class="footer-list">
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN TP.HCM: 123 Nguyễn Huệ, Q.1</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Hà Nội: 45 Trần Duy Hưng, Cầu Giấy</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Đà Nẵng: 88 Bạch Đằng, Hải Châu</span></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Nhận thông báo</h3>
+                    <p class="footer-desc">Điền email để nhận thông báo sản phẩm mới, sự kiện và ưu đãi TechStore.</p>
+                    <form class="newsletter-form" data-newsletter="true">
+                        <input class="newsletter-input" type="email" name="email" placeholder="Email của bạn" required>
+                        <button class="newsletter-btn" type="submit">Đăng ký</button>
+                    </form>
+                    <ul class="footer-list footer-contact">
+                        <li class="footer-item"><i class="fa-solid fa-phone"></i><a class="footer-link" href="tel:0901234567">Hotline: 0901 234 567</a></li>
+                        <li class="footer-item"><i class="fa-solid fa-envelope"></i><a class="footer-link" href="mailto:techstore@gmail.com">Email: techstore@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 TechStore. All rights reserved.</span>
+                <span>Giờ mở cửa: 09:00 - 21:30 (T2 - CN)</span>
+            </div>
+        </div>
+    </footer>
 
 <!-- Scripts -->
 <script src="js/utils.js"></script>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tin tức - ROG TechStore</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/notifications.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="Logo" class="logo-img"><span class="logo-text">TechStore</span></a>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="products.html">Sản phẩm</a></li>
+                    <li><a href="news.html" class="active">Tin tức</a></li>
+                    <li><a href="cart.html">Giỏ hàng <span id="cart-count" class="cart-count">0</span></a></li>
+                </ul>
+            </nav>
+            <div class="header-search" data-site-search data-search-mode="redirect">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="site-search-input" type="text" placeholder="Tìm sản phẩm..." autocomplete="off">
+                <div class="search-suggest" style="display: none;"></div>
+            </div>
+            <div class="auth-buttons">
+                <div id="guest-buttons">
+                    <a href="login.html" class="btn btn-login">Đăng nhập</a>
+                    <a href="register.html" class="btn btn-register">Đăng ký</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">Trang tin tức</h1>
+        <p class="page-subtitle">Bản tin ra mắt sản phẩm mới, sự kiện, chi nhánh cửa hàng và chương trình đổi thưởng dành cho cộng đồng ASUS ROG.</p>
+
+        <section class="news-hero scroll-reveal">
+            <div class="news-slider" id="news-slider"></div>
+        </section>
+
+        <div class="news-list scroll-reveal" id="news-posts"></div>
+    </main>
+
+    <div class="post-modal-overlay" id="post-modal-overlay" style="display: none;"></div>
+    <div class="post-modal" id="post-modal" style="display: none;">
+        <button type="button" class="post-modal-close" id="post-modal-close" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="post-modal-body">
+            <div class="post-modal-image" id="post-modal-image"></div>
+            <div class="post-modal-content">
+                <div class="post-modal-meta" id="post-modal-meta"></div>
+                <h2 class="post-modal-title" id="post-modal-title"></h2>
+                <div class="post-modal-text" id="post-modal-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="ROG Logo" class="footer-logo">
+                        <span class="footer-brand-name">TechStore</span>
+                    </div>
+                    <p class="footer-desc">Cửa hàng chuyên hệ sinh thái ROG: laptop, màn hình, bàn phím, chuột và âm thanh gaming.</p>
+                    <div class="footer-social">
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i><span>Instagram: @rog.techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i><span>TikTok: @rog.techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook: ROG TechStore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-comment-dots"></i><span>Zalo: 0901 234 567</span></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Chi nhánh</h3>
+                    <ul class="footer-list">
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN TP.HCM: 123 Nguyễn Huệ, Q.1</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Hà Nội: 45 Trần Duy Hưng, Cầu Giấy</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Đà Nẵng: 88 Bạch Đằng, Hải Châu</span></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3 class="footer-title">Nhận thông báo</h3>
+                    <p class="footer-desc">Điền email để nhận thông báo sản phẩm mới, sự kiện và ưu đãi ROG.</p>
+                    <form class="newsletter-form" data-newsletter="true">
+                        <input class="newsletter-input" type="email" name="email" placeholder="Email của bạn" required>
+                        <button class="newsletter-btn" type="submit">Đăng ký</button>
+                    </form>
+                    <ul class="footer-list footer-contact">
+                        <li class="footer-item"><i class="fa-solid fa-phone"></i><a class="footer-link" href="tel:0901234567">Hotline: 0901 234 567</a></li>
+                        <li class="footer-item"><i class="fa-solid fa-envelope"></i><a class="footer-link" href="mailto:rog.techstore@gmail.com">Email: rog.techstore@gmail.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 ROG TechStore. All rights reserved.</span>
+                <span>Giờ mở cửa: 09:00 - 21:30 (T2 - CN)</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/vouchers.js"></script>
+    <script src="js/search.js"></script>
+    <script>
+        const NEWS_POSTS_KEY = 'news_posts';
+
+        function getNewsPosts() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(NEWS_POSTS_KEY) || '[]');
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = String(str || '');
+            return div.innerHTML;
+        }
+
+        function toExcerpt(text, maxLen) {
+            const t = String(text || '').replace(/\s+/g, ' ').trim();
+            if (!t) return '';
+            return t.length > maxLen ? t.slice(0, maxLen - 1) + '…' : t;
+        }
+
+        function renderNewsSlider(posts) {
+            const root = document.getElementById('news-slider');
+            if (!root) return;
+            const slides = posts.slice(0, 3);
+            if (!slides.length) {
+                root.innerHTML = '';
+                return;
+            }
+            root.innerHTML = `
+                ${slides.map((p, i) => `
+                    <div class="news-slide ${i === 0 ? 'active' : ''}" data-index="${i}">
+                        <img src="${p.image}" alt="${escapeHtml(p.title)}">
+                        <div class="news-slide-content">
+                            <h2>${escapeHtml(p.title)}</h2>
+                            <p>${escapeHtml(toExcerpt(p.content, 140))}</p>
+                        </div>
+                    </div>
+                `).join('')}
+                <div class="news-dots">
+                    ${slides.map((_, i) => `<button class="news-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></button>`).join('')}
+                </div>
+            `;
+
+            const slideEls = root.querySelectorAll('.news-slide');
+            const dotEls = root.querySelectorAll('.news-dot');
+            let current = 0;
+            let timer;
+
+            const show = (idx) => {
+                slideEls.forEach(s => s.classList.remove('active'));
+                dotEls.forEach(d => d.classList.remove('active'));
+                slideEls[idx].classList.add('active');
+                dotEls[idx].classList.add('active');
+                current = idx;
+            };
+
+            const start = () => {
+                timer = setInterval(() => {
+                    const next = (current + 1) % slideEls.length;
+                    show(next);
+                }, 5000);
+            };
+
+            dotEls.forEach(d => {
+                d.addEventListener('click', () => {
+                    const idx = Number(d.dataset.index || 0);
+                    clearInterval(timer);
+                    show(idx);
+                    start();
+                });
+            });
+
+            start();
+        }
+
+        function renderNewsList(posts) {
+            const root = document.getElementById('news-posts');
+            if (!root) return;
+            if (!posts.length) {
+                root.innerHTML = '<div class="orders-empty"><div class="orders-empty-icon"><i class="fa-solid fa-newspaper"></i></div><h2>Chưa có bài viết</h2><p>Vui lòng đăng bài trong trang quản trị để hiển thị tại đây.</p></div>';
+                return;
+            }
+            root.innerHTML = posts.map(p => `
+                <article class="news-card">
+                    <div class="news-card-image">
+                        <img src="${p.image}" alt="${escapeHtml(p.title)}">
+                    </div>
+                    <div class="news-card-content">
+                        <div class="news-card-meta">
+                            <span class="news-card-tag">ROG</span>
+                            <span>${p.createdAt ? new Date(p.createdAt).toLocaleDateString('vi-VN') : ''}</span>
+                        </div>
+                        <h2 class="news-card-title">${escapeHtml(p.title)}</h2>
+                        <p class="news-card-excerpt">${escapeHtml(toExcerpt(p.content, 180))}</p>
+                        <a href="news.html?post=${encodeURIComponent(p.id)}" class="news-card-readmore" data-id="${p.id}">Đọc thêm <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function openPostModal(post) {
+            const overlay = document.getElementById('post-modal-overlay');
+            const modal = document.getElementById('post-modal');
+            const img = document.getElementById('post-modal-image');
+            const meta = document.getElementById('post-modal-meta');
+            const title = document.getElementById('post-modal-title');
+            const text = document.getElementById('post-modal-text');
+            if (!overlay || !modal || !img || !meta || !title || !text) return;
+
+            img.style.backgroundImage = `url('${post.image}')`;
+            meta.textContent = post.createdAt ? new Date(post.createdAt).toLocaleString('vi-VN') : '';
+            title.textContent = post.title || '';
+            text.innerHTML = escapeHtml(post.content || '').replace(/\n/g, '<br>');
+
+            overlay.style.display = 'block';
+            modal.style.display = 'block';
+            requestAnimationFrame(() => {
+                overlay.classList.add('open');
+                modal.classList.add('open');
+            });
+        }
+
+        function closePostModal() {
+            const overlay = document.getElementById('post-modal-overlay');
+            const modal = document.getElementById('post-modal');
+            if (!overlay || !modal) return;
+            overlay.classList.remove('open');
+            modal.classList.remove('open');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                modal.style.display = 'none';
+            }, 200);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+            const posts = getNewsPosts().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            renderNewsSlider(posts);
+            renderNewsList(posts);
+
+            document.getElementById('post-modal-overlay')?.addEventListener('click', closePostModal);
+            document.getElementById('post-modal-close')?.addEventListener('click', closePostModal);
+
+            document.getElementById('news-posts')?.addEventListener('click', (e) => {
+                const link = e.target.closest('.news-card-readmore');
+                if (!link) return;
+                e.preventDefault();
+                const id = String(link.dataset.id || '');
+                const post = posts.find(p => String(p.id) === id);
+                if (!post) return;
+                const url = new URL(window.location.href);
+                url.searchParams.set('post', id);
+                window.history.pushState({}, '', url.toString());
+                openPostModal(post);
+            });
+
+            const params = new URLSearchParams(window.location.search);
+            const openId = params.get('post');
+            if (openId) {
+                const post = posts.find(p => String(p.id) === String(openId));
+                if (post) openPostModal(post);
+            }
+
+            window.addEventListener('popstate', () => {
+                const p = new URLSearchParams(window.location.search).get('post');
+                if (!p) closePostModal();
+            });
+        });
+    </script>
+</body>
+</html>

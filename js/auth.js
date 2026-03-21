@@ -2,6 +2,116 @@
 
 let currentUser = null;
 
+const SIDEBAR_ENABLED_PAGES = new Set([
+    'index.html',
+    'products.html',
+    'news.html',
+    'cart.html',
+    'my-orders.html'
+]);
+
+function getCurrentPageFileName() {
+    const path = (window.location.pathname || '').toLowerCase();
+    if (path.endsWith('/')) return 'index.html';
+    const parts = path.split('/');
+    return parts[parts.length - 1] || 'index.html';
+}
+
+function isSidebarEnabledPage() {
+    return SIDEBAR_ENABLED_PAGES.has(getCurrentPageFileName());
+}
+
+function setSidebarOpen(open) {
+    const overlay = document.getElementById('user-sidebar-overlay');
+    const sidebar = document.getElementById('user-sidebar');
+    if (!overlay || !sidebar) return;
+    if (open) {
+        overlay.classList.add('active');
+        sidebar.classList.add('open');
+        document.body.classList.add('sidebar-open');
+    } else {
+        overlay.classList.remove('active');
+        sidebar.classList.remove('open');
+        document.body.classList.remove('sidebar-open');
+    }
+}
+
+function ensureUserSidebar() {
+    if (!isSidebarEnabledPage()) return;
+
+    const authButtons = document.querySelector('.auth-buttons');
+    if (!authButtons) return;
+
+    let trigger = document.getElementById('user-sidebar-trigger');
+    if (!trigger) {
+        trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.id = 'user-sidebar-trigger';
+        trigger.className = 'user-sidebar-trigger';
+        trigger.style.display = 'none';
+        trigger.innerHTML = `
+            <span class="user-sidebar-avatar"><i class="fa-solid fa-user"></i></span>
+            <span class="user-sidebar-username"></span>
+            <i class="fa-solid fa-chevron-down user-sidebar-chevron"></i>
+        `;
+        authButtons.prepend(trigger);
+        trigger.addEventListener('click', () => setSidebarOpen(true));
+    }
+
+    if (!document.getElementById('user-sidebar-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.id = 'user-sidebar-overlay';
+        overlay.className = 'user-sidebar-overlay';
+        overlay.addEventListener('click', () => setSidebarOpen(false));
+        document.body.appendChild(overlay);
+    }
+
+    if (!document.getElementById('user-sidebar')) {
+        const sidebar = document.createElement('aside');
+        sidebar.id = 'user-sidebar';
+        sidebar.className = 'user-sidebar';
+        sidebar.innerHTML = `
+            <div class="user-sidebar-head">
+                <div class="user-sidebar-profile">
+                    <div class="user-sidebar-profile-avatar">
+                        <i class="fa-solid fa-user-astronaut"></i>
+                    </div>
+                    <div class="user-sidebar-profile-meta">
+                        <div class="user-sidebar-profile-name" id="user-sidebar-name"></div>
+                        <div class="user-sidebar-profile-sub">ROG Member</div>
+                    </div>
+                </div>
+                <button type="button" class="user-sidebar-close" id="user-sidebar-close" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="user-sidebar-body">
+                <a class="user-sidebar-action" href="my-orders.html">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>Đơn hàng của tôi</span>
+                </a>
+                <a class="user-sidebar-action" href="admin.html" id="user-sidebar-admin" style="display: none;">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Quản trị</span>
+                </a>
+            </div>
+            <div class="user-sidebar-foot">
+                <button type="button" class="user-sidebar-logout" id="user-sidebar-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        `;
+        document.body.appendChild(sidebar);
+
+        const closeBtn = document.getElementById('user-sidebar-close');
+        if (closeBtn) closeBtn.addEventListener('click', () => setSidebarOpen(false));
+
+        const logoutBtn = document.getElementById('user-sidebar-logout');
+        if (logoutBtn) logoutBtn.addEventListener('click', logout);
+    }
+}
+
 // Kiểm tra trạng thái đăng nhập từ localStorage
 function loadCurrentUser() {
     const stored = localStorage.getItem('currentUser');
@@ -15,17 +125,13 @@ function loadCurrentUser() {
 
 // Cập nhật giao diện theo quyền user
 function updateUIForUser() {
-    const userInfo = document.getElementById('user-info');
     const guestButtons = document.getElementById('guest-buttons');
-    const usernameDisplay = document.getElementById('username-display');
     const userOnlyItems = document.querySelectorAll('.user-only');
     const adminOnlyItems = document.querySelectorAll('.admin-only');
 
     if (currentUser) {
         // Đã đăng nhập
-        if (userInfo) userInfo.style.display = 'flex';
         if (guestButtons) guestButtons.style.display = 'none';
-        if (usernameDisplay) usernameDisplay.textContent = currentUser.username;
 
         // Hiển thị menu cho user thường
         userOnlyItems.forEach(el => el.style.display = 'list-item');
@@ -38,10 +144,31 @@ function updateUIForUser() {
         }
     } else {
         // Chưa đăng nhập
-        if (userInfo) userInfo.style.display = 'none';
         if (guestButtons) guestButtons.style.display = 'flex';
         userOnlyItems.forEach(el => el.style.display = 'none');
         adminOnlyItems.forEach(el => el.style.display = 'none');
+        setSidebarOpen(false);
+    }
+
+    ensureUserSidebar();
+    const trigger = document.getElementById('user-sidebar-trigger');
+    const nameEl = document.getElementById('user-sidebar-name');
+    const adminLink = document.getElementById('user-sidebar-admin');
+
+    if (trigger && isSidebarEnabledPage()) {
+        if (currentUser) {
+            trigger.style.display = 'inline-flex';
+            const usernameEl = trigger.querySelector('.user-sidebar-username');
+            if (usernameEl) usernameEl.textContent = currentUser.username;
+        } else {
+            trigger.style.display = 'none';
+        }
+    }
+    if (nameEl) {
+        nameEl.textContent = currentUser ? currentUser.username : '';
+    }
+    if (adminLink) {
+        adminLink.style.display = currentUser?.isAdmin ? 'flex' : 'none';
     }
 }
 
@@ -97,10 +224,6 @@ function logout() {
 // Khởi tạo khi trang load
 document.addEventListener('DOMContentLoaded', function() {
     loadCurrentUser();
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
 });
 
 // Xuất hàm ra global
@@ -114,25 +237,3 @@ window.getCurrentUser = () => currentUser;
 function isAdmin() {
     return currentUser && currentUser.isAdmin === true;
 }
-
-// Kiểm tra và cập nhật hiển thị nút đăng nhập/đăng xuất ở header
-function updateAuthButtons() {
-    const userInfo = document.getElementById('user-info');
-    const guestButtons = document.getElementById('guest-buttons');
-    const usernameDisplay = document.getElementById('username-display');
-    
-    if (currentUser) {
-        if (userInfo) userInfo.style.display = 'flex';
-        if (guestButtons) guestButtons.style.display = 'none';
-        if (usernameDisplay) usernameDisplay.textContent = currentUser.username;
-    } else {
-        if (userInfo) userInfo.style.display = 'none';
-        if (guestButtons) guestButtons.style.display = 'flex';
-    }
-}
-
-// Gọi khi trang load
-document.addEventListener('DOMContentLoaded', function() {
-    // ... existing code ...
-    updateAuthButtons();
-});

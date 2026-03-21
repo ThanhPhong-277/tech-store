@@ -190,13 +190,11 @@ function loadCart() {
 
     container.innerHTML = html;
 
-    // Tổng tiền
     updateCartTotal();
 
-    // Gán sự kiện
     attachCartEvents();
-    initLocationSelects(); // provinces
-    initStoreSelect(); // stores
+    initLocationSelects();
+    initStoreSelect();
     initVoucherSelect();
 }
 
@@ -352,54 +350,95 @@ function checkout() {
         localStorage.removeItem('selectedVoucher');
     }
 
-    showToast('Đặt hàng thành công! Đang chuyển đến trang đơn hàng...', 'success');
-    setTimeout(() => {
-        window.location.href = 'my-orders.html';
-    }, 2000);
+    showOrderSuccessPopup();
 }
 
-// Trong loadCart, sau khi tạo HTML, gọi:
+function showOrderSuccessPopup() {
+    const overlay = document.getElementById('order-success-overlay');
+    const modal = document.getElementById('order-success-modal');
+    const homeBtn = document.getElementById('order-success-home');
+    const ordersBtn = document.getElementById('order-success-orders');
+    if (!overlay || !modal || !homeBtn || !ordersBtn) {
+        showToast('Đặt hàng thành công!', 'success');
+        setTimeout(() => {
+            window.location.href = 'my-orders.html';
+        }, 1200);
+        return;
+    }
+
+    overlay.style.display = 'block';
+    modal.style.display = 'block';
+    requestAnimationFrame(() => {
+        overlay.classList.add('open');
+        modal.classList.add('open');
+    });
+
+    const close = () => {
+        overlay.classList.remove('open');
+        modal.classList.remove('open');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            modal.style.display = 'none';
+        }, 200);
+    };
+
+    overlay.onclick = close;
+    homeBtn.onclick = () => {
+        close();
+        window.location.href = 'index.html';
+    };
+    ordersBtn.onclick = () => {
+        close();
+        window.location.href = 'my-orders.html';
+    };
+}
+
 function initVoucherSelect() {
     const select = document.getElementById('voucher-select');
     if (!select) return;
-    const user = getCurrentUser();
-    if (!user) {
-        select.innerHTML = '<option value="">Đăng nhập để dùng voucher</option>';
-        return;
-    }
-    loadUserVouchersToSelect(user.id, select);
+    loadUserVouchersToSelect();
+    setupVoucherApply();
+    syncSelectedVoucherUI();
 }
 
-document.getElementById('apply-voucher')?.addEventListener('click', function() {
+function syncSelectedVoucherUI() {
+    const selected = JSON.parse(localStorage.getItem('selectedVoucher') || 'null');
+    const applied = document.getElementById('applied-voucher');
+    const codeEl = document.getElementById('voucher-code');
+    const discountEl = document.getElementById('voucher-discount');
     const select = document.getElementById('voucher-select');
-    const voucherId = select.value;
-    if (!voucherId) {
-        showToast('Chọn voucher', 'error');
-        return;
-    }
-    const user = getCurrentUser();
-    if (!user) return;
-    const userVouchers = getUserVouchers(user.id);
-    const voucher = userVouchers.find(v => v.id == voucherId);
-    if (!voucher) return;
-    const subtotal = calculateCartTotal();
-    if (subtotal < voucher.minOrder) {
-        showToast(`Đơn tối thiểu ${formatCurrency(voucher.minOrder)}`, 'error');
-        return;
-    }
-    localStorage.setItem('selectedVoucher', JSON.stringify(voucher));
-    document.getElementById('applied-voucher').style.display = 'block';
-    document.getElementById('voucher-code').textContent = voucher.code;
-    let discountText = voucher.type === 'percent' ? `-${voucher.value}%` : `-${formatCurrency(voucher.value)}`;
-    document.getElementById('voucher-discount').textContent = discountText;
-    updateCartTotal();
-});
 
-document.getElementById('remove-voucher')?.addEventListener('click', function() {
-    localStorage.removeItem('selectedVoucher');
-    document.getElementById('applied-voucher').style.display = 'none';
+    if (!applied || !codeEl || !discountEl || !select) return;
+
+    if (!selected) {
+        applied.style.display = 'none';
+        return;
+    }
+
+    const available = typeof getAvailableVouchersForCart === 'function' ? getAvailableVouchersForCart() : [];
+    const stillAvailable = available.some(v => v.id === selected.id);
+    if (!stillAvailable) {
+        localStorage.removeItem('selectedVoucher');
+        applied.style.display = 'none';
+        return;
+    }
+
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    if (subtotal < (selected.minOrder || 0)) {
+        localStorage.removeItem('selectedVoucher');
+        applied.style.display = 'none';
+        updateCartTotal();
+        return;
+    }
+
+    select.value = String(selected.id);
+    applied.style.display = 'block';
+    codeEl.textContent = selected.code;
+    const discount = selected.type === 'percent' ? subtotal * selected.value / 100 : selected.value;
+    discountEl.textContent = `-${formatCurrency(discount)}`;
     updateCartTotal();
-});
+}
 
 function initStoreSelect() {
     const select = document.getElementById('store-select');

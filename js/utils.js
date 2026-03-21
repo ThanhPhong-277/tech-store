@@ -26,10 +26,11 @@ function formatCurrency(amount) {
 // Lấy tên danh mục từ category key
 function getCategoryName(category) {
     const map = {
-        'laptop': 'Laptop',
-        'monitor': 'Màn hình',
-        'keyboard': 'Bàn phím',
-        'mouse': 'Chuột'
+        'laptop': 'Laptop Gaming',
+        'monitor': 'Màn hình Gaming',
+        'keyboard': 'Bàn phím Gaming',
+        'mouse': 'Chuột Gaming',
+        'headphone': 'Tai nghe Gaming'
     };
     return map[category] || category;
 }
@@ -143,3 +144,53 @@ window.isEmpty = isEmpty;
 window.generateId = generateId;
 window.deepCopy = deepCopy;
 window.debounce = debounce;
+
+function setupNewsletterForms() {
+    const forms = document.querySelectorAll('form.newsletter-form');
+    forms.forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const emailInput = form.querySelector('input[name="email"]');
+            const email = (emailInput?.value || '').trim();
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                showToast('Vui lòng nhập email hợp lệ.', 'error');
+                return;
+            }
+            const stored = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
+            if (!stored.includes(email)) {
+                stored.push(email);
+                localStorage.setItem('newsletter_emails', JSON.stringify(stored));
+            }
+            if (emailInput) emailInput.value = '';
+            showToast('Đã đăng ký nhận thông báo thành công!', 'success');
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', setupNewsletterForms);
+
+function setupBackButton() {
+    if (document.getElementById('back-btn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'back-btn';
+    btn.className = 'back-btn';
+    btn.type = 'button';
+    btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
+    btn.addEventListener('click', () => {
+        if (window.history.length > 1) {
+            window.history.back();
+            return;
+        }
+        window.location.href = 'index.html';
+    });
+    document.body.appendChild(btn);
+
+    const toggle = () => {
+        const y = window.scrollY || document.documentElement.scrollTop || 0;
+        btn.classList.toggle('show', y > 180);
+    };
+    window.addEventListener('scroll', toggle, { passive: true });
+    toggle();
+}
+
+document.addEventListener('DOMContentLoaded', setupBackButton);

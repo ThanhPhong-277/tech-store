@@ -1,14 +1,18 @@
 // orders.js
 
+let activeUserOrderFilter = 'all';
+
 function loadUserOrders() {
     const user = getCurrentUser();
     const notLoginMsg = document.getElementById('not-login-message');
     const filterDiv = document.getElementById('orders-filter');
     const listDiv = document.getElementById('user-orders-list');
+    const statsDiv = document.getElementById('orders-stats');
 
     if (!user) {
         if (notLoginMsg) notLoginMsg.style.display = 'block';
         if (filterDiv) filterDiv.style.display = 'none';
+        if (statsDiv) statsDiv.style.display = 'none';
         if (listDiv) listDiv.innerHTML = '';
         return;
     }
@@ -19,50 +23,69 @@ function loadUserOrders() {
     const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
     const userOrders = allOrders.filter(o => o.userId === user.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+    renderOrderStats(userOrders);
+
     if (userOrders.length === 0) {
-        listDiv.innerHTML = '<p class="no-data">Bạn chưa có đơn hàng nào.</p>';
+        if (filterDiv) filterDiv.style.display = 'none';
+        listDiv.innerHTML = `
+            <div class="orders-empty">
+                <div class="orders-empty-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                <h2>Bạn chưa có đơn hàng nào</h2>
+                <p>Khám phá hệ sinh thái ASUS ROG và đặt đơn hàng đầu tiên ngay hôm nay.</p>
+                <a class="btn btn-primary" href="products.html">Xem sản phẩm</a>
+            </div>
+        `;
         return;
     }
 
     renderUserOrders(userOrders);
+    initOrderFilter(userOrders);
 }
 
 function renderUserOrders(orders) {
     const listDiv = document.getElementById('user-orders-list');
     listDiv.innerHTML = orders.map(order => createOrderCard(order)).join('');
     attachOrderEvents();
+    filterUserOrders(activeUserOrderFilter);
 }
 
 function createOrderCard(order) {
     const statusText = getStatusText(order.status);
     const statusClass = getStatusClass(order.status);
-    const itemsHtml = order.items.map(item => `
-        <div class="order-item">
-            <span>${item.name} ${item.color ? '('+item.color+')' : ''} x${item.quantity}</span>
-            <span>${formatCurrency(item.price * item.quantity)}</span>
+    const itemsPreview = (order.items || []).slice(0, 3);
+    const remainingCount = Math.max(0, (order.items || []).length - itemsPreview.length);
+    const previewHtml = itemsPreview.map(item => `
+        <div class="order-item-row">
+            <span class="order-item-name">${item.name}${item.color ? ` <span class="order-item-color">(${item.color})</span>` : ''}</span>
+            <span class="order-item-qty">x${item.quantity}</span>
         </div>
     `).join('');
+    const moreHtml = remainingCount > 0 ? `<div class="order-item-more">+${remainingCount} sản phẩm khác</div>` : '';
 
     return `
         <div class="order-card" data-id="${order.id}" data-status="${order.status}">
-            <div class="order-header">
-                <span class="order-id">Đơn hàng #${order.id}</span>
-                <span class="order-date">${new Date(order.createdAt).toLocaleString('vi-VN')}</span>
-                <span class="order-status ${statusClass}">${statusText}</span>
-            </div>
-            <div class="order-body">
-                <div class="order-items">${itemsHtml}</div>
-                <div class="order-summary">
-                    <p><strong>Tổng cộng:</strong> ${formatCurrency(order.total)}</p>
-                    <p><strong>Thanh toán:</strong> ${getPaymentMethodText(order.paymentMethod)}</p>
-                    <p><strong>Giao hàng:</strong> ${order.deliveryType === 'shipping' ? 'Giao tận nơi' : 'Nhận tại cửa hàng'}</p>
+            <div class="order-top">
+                <div class="order-top-left">
+                    <div class="order-code">#${order.id}</div>
+                    <div class="order-meta">
+                        <span><i class="fa-regular fa-calendar"></i> ${new Date(order.createdAt).toLocaleString('vi-VN')}</span>
+                        <span><i class="fa-solid fa-truck-fast"></i> ${order.deliveryType === 'shipping' ? 'Giao tận nơi' : 'Nhận tại cửa hàng'}</span>
+                        <span><i class="fa-solid fa-credit-card"></i> ${getPaymentMethodText(order.paymentMethod)}</span>
+                    </div>
+                </div>
+                <div class="order-top-right">
+                    <span class="order-status-pill ${statusClass}">${statusText}</span>
+                    <div class="order-total">${formatCurrency(order.total)}</div>
                 </div>
             </div>
-            <div class="order-footer">
-                <button class="btn btn-outline view-order-detail" data-id="${order.id}">Xem chi tiết</button>
-                ${order.status === 'pending' ? `<button class="btn btn-danger cancel-order" data-id="${order.id}">Hủy đơn</button>` : ''}
-                ${order.status === 'approved' ? '<span class="success-badge"><i class="fas fa-check-circle"></i> Đã duyệt</span>' : ''}
-                ${order.status === 'rejected' ? '<span class="error-badge"><i class="fas fa-times-circle"></i> Bị từ chối</span>' : ''}
+            <div class="order-divider"></div>
+            <div class="order-items-preview">
+                ${previewHtml}
+                ${moreHtml}
+            </div>
+            <div class="order-actions">
+                <button class="btn btn-outline view-order-detail" data-id="${order.id}"><i class="fa-solid fa-magnifying-glass"></i> Chi tiết</button>
+                ${order.status === 'pending' ? `<button class="btn btn-danger cancel-order" data-id="${order.id}"><i class="fa-solid fa-ban"></i> Hủy đơn</button>` : ''}
             </div>
         </div>
     `;
@@ -96,9 +119,96 @@ function getPaymentMethodText(method) {
     const map = {
         'cod': 'Thanh toán khi nhận hàng',
         'bank': 'Chuyển khoản',
+        'bank_transfer': 'Chuyển khoản',
         'card': 'Thẻ'
     };
     return map[method] || method;
+}
+
+function initOrderFilter(orders) {
+    const filterDiv = document.getElementById('orders-filter');
+    if (!filterDiv) return;
+
+    const buttons = Array.from(filterDiv.querySelectorAll('.filter-btn'));
+    const activeBtn = buttons.find(b => b.dataset.status === activeUserOrderFilter);
+    if (activeBtn) {
+        buttons.forEach(b => b.classList.remove('active'));
+        activeBtn.classList.add('active');
+    }
+
+    if (filterDiv.dataset.bound === 'true') return;
+    filterDiv.dataset.bound = 'true';
+
+    filterDiv.addEventListener('click', (e) => {
+        const btn = e.target.closest('.filter-btn');
+        if (!btn) return;
+        const status = btn.dataset.status || 'all';
+        activeUserOrderFilter = status;
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterUserOrders(status);
+        updateFilterCounter(orders, status);
+    });
+
+    updateFilterCounter(orders, activeUserOrderFilter);
+}
+
+function updateFilterCounter(orders, status) {
+    const listDiv = document.getElementById('user-orders-list');
+    if (!listDiv) return;
+    const visibleCount = status === 'all' ? orders.length : orders.filter(o => o.status === status).length;
+    listDiv.dataset.visibleCount = String(visibleCount);
+}
+
+function renderOrderStats(orders) {
+    const statsDiv = document.getElementById('orders-stats');
+    if (!statsDiv) return;
+
+    const countBy = (status) => orders.filter(o => o.status === status).length;
+    const total = orders.length;
+    const pending = countBy('pending');
+    const processing = countBy('processing');
+    const approved = countBy('approved');
+    const completed = countBy('completed');
+
+    statsDiv.style.display = 'grid';
+    statsDiv.innerHTML = `
+        <div class="orders-stat stat-total">
+            <div class="orders-stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+            <div class="orders-stat-meta">
+                <div class="orders-stat-label">Tổng đơn</div>
+                <div class="orders-stat-value">${total}</div>
+            </div>
+        </div>
+        <div class="orders-stat stat-pending">
+            <div class="orders-stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="orders-stat-meta">
+                <div class="orders-stat-label">Chờ xử lý</div>
+                <div class="orders-stat-value">${pending}</div>
+            </div>
+        </div>
+        <div class="orders-stat stat-processing">
+            <div class="orders-stat-icon"><i class="fa-solid fa-gears"></i></div>
+            <div class="orders-stat-meta">
+                <div class="orders-stat-label">Đang xử lý</div>
+                <div class="orders-stat-value">${processing}</div>
+            </div>
+        </div>
+        <div class="orders-stat stat-approved">
+            <div class="orders-stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="orders-stat-meta">
+                <div class="orders-stat-label">Đã duyệt</div>
+                <div class="orders-stat-value">${approved}</div>
+            </div>
+        </div>
+        <div class="orders-stat stat-completed">
+            <div class="orders-stat-icon"><i class="fa-solid fa-trophy"></i></div>
+            <div class="orders-stat-meta">
+                <div class="orders-stat-label">Hoàn thành</div>
+                <div class="orders-stat-value">${completed}</div>
+            </div>
+        </div>
+    `;
 }
 
 function attachOrderEvents() {
@@ -190,7 +300,7 @@ function filterUserOrders(status) {
     const cards = document.querySelectorAll('.order-card');
     cards.forEach(card => {
         if (status === 'all' || card.dataset.status === status) {
-            card.style.display = 'block';
+            card.style.display = '';
         } else {
             card.style.display = 'none';
         }

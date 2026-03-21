@@ -1,50 +1,5 @@
 // js/admin.js
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Kiểm tra quyền admin
-    if (!isAdmin()) {
-        window.location.href = 'index.html';
-        return;
-    }
-
-    // Hiển thị tên admin
-    const user = getCurrentUser();
-    document.getElementById('admin-name').textContent = user?.username || 'Admin';
-
-    // Khởi tạo các section
-    initializeDashboard();
-    loadProductsSection();
-    loadOrdersSection();
-    loadVouchersSection();
-    loadMembersSection();
-    loadStoresSection();
-
-    // Xử lý chuyển đổi menu
-    document.querySelectorAll('.menu-item[data-section]').forEach(item => {
-        item.addEventListener('click', function() {
-            const section = this.dataset.section;
-            switchSection(section);
-        });
-    });
-
-    // Xử lý đăng xuất từ sidebar
-    document.getElementById('admin-logout').addEventListener('click', logout);
-
-    // Xử lý nút làm mới
-    document.getElementById('refresh-data').addEventListener('click', function() {
-        refreshCurrentSection();
-    });
-
-    // Xử lý đăng xuất từ header (nếu có)
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
-
-    // Cập nhật số lượng giỏ hàng
-    updateCartCount();
-});
-
 let currentAdminSection = 'dashboard';
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -65,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadVouchersSection();
     loadMembersSection();
     loadStoresSection();
+    loadNewsSection();
 
     // Xử lý chuyển đổi menu
     document.querySelectorAll('.menu-item[data-section]').forEach(item => {
@@ -108,6 +64,7 @@ function switchSection(section) {
         'vouchers': 'Quản lý voucher',
         'members': 'Quản lý thành viên',
         'stores': 'Quản lý cửa hàng',
+        'news': 'Quản lý tin tức',
         'settings': 'Cài đặt'
     };
     document.getElementById('page-title').textContent = titles[section] || 'Admin';
@@ -135,6 +92,9 @@ function refreshCurrentSection() {
             break;
         case 'stores':
             loadStoresSection();
+            break;
+        case 'news':
+            loadNewsSection();
             break;
     }
     showToast('Đã làm mới dữ liệu', 'success');
@@ -371,6 +331,163 @@ function loadStoresSection() {
         `;
     }).join('') : '<tr><td colspan="6" style="text-align: center;">Chưa có cửa hàng</td></tr>';
 }
+
+const NEWS_POSTS_KEY = 'news_posts';
+
+function getNewsPosts() {
+    const raw = localStorage.getItem(NEWS_POSTS_KEY);
+    try {
+        const parsed = JSON.parse(raw || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveNewsPosts(posts) {
+    localStorage.setItem(NEWS_POSTS_KEY, JSON.stringify(posts));
+}
+
+function seedNewsPostsIfNeeded() {
+    const existing = getNewsPosts();
+    if (existing.length) return;
+    const now = new Date();
+    const sample = [
+        {
+            id: 1,
+            title: 'ROG Strix Scar 18 (2024) chính thức lên kệ',
+            image: 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1200',
+            content: 'ROG Strix Scar 18 (2024) đã có mặt tại ROG TechStore với màn hình Nebula HDR, hiệu năng đỉnh cao và hệ thống tản nhiệt tối ưu cho gaming.\n\nTrải nghiệm trực tiếp tại cửa hàng và nhận ưu đãi dành riêng cho thành viên ROG.',
+            createdAt: new Date(now.getTime() - 3 * 86400000).toISOString(),
+            updatedAt: new Date(now.getTime() - 3 * 86400000).toISOString()
+        },
+        {
+            id: 2,
+            title: 'Khai trương chi nhánh ROG Elite Store',
+            image: 'https://images.pexels.com/photos/19012039/pexels-photo-19012039.jpeg?auto=compress&cs=tinysrgb&w=1200',
+            content: 'Chào mừng chi nhánh mới với khu vực trải nghiệm gaming, setup battle-station và hàng loạt phụ kiện ROG.\n\nĐến ngay để nhận voucher khai trương và quà tặng giới hạn.',
+            createdAt: new Date(now.getTime() - 6 * 86400000).toISOString(),
+            updatedAt: new Date(now.getTime() - 6 * 86400000).toISOString()
+        },
+        {
+            id: 3,
+            title: 'ROG Elite Rewards: Tích điểm đổi quà cực chất',
+            image: 'https://images.pexels.com/photos/3587478/pexels-photo-3587478.jpeg?auto=compress&cs=tinysrgb&w=1200',
+            content: 'Tích lũy ROG Points từ mỗi đơn hàng để đổi quà, voucher và phụ kiện giới hạn.\n\nBạn có thể theo dõi điểm và ưu đãi ngay trong trang tin tức.',
+            createdAt: new Date(now.getTime() - 9 * 86400000).toISOString(),
+            updatedAt: new Date(now.getTime() - 9 * 86400000).toISOString()
+        }
+    ];
+    saveNewsPosts(sample);
+}
+
+function openNewsForm(post) {
+    const container = document.getElementById('news-form-container');
+    const titleEl = document.getElementById('news-form-title');
+    const form = document.getElementById('news-form');
+    if (!container || !titleEl || !form) return;
+
+    document.getElementById('news-id').value = post ? String(post.id) : '';
+    document.getElementById('news-title').value = post ? (post.title || '') : '';
+    document.getElementById('news-image').value = post ? (post.image || '') : '';
+    document.getElementById('news-content').value = post ? (post.content || '') : '';
+
+    titleEl.textContent = post ? 'Sửa bài viết' : 'Thêm bài viết mới';
+    container.style.display = 'block';
+}
+
+function closeNewsForm() {
+    const container = document.getElementById('news-form-container');
+    if (container) container.style.display = 'none';
+}
+
+function loadNewsSection() {
+    seedNewsPostsIfNeeded();
+    const posts = getNewsPosts().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const tbody = document.getElementById('news-list');
+    if (!tbody) return;
+
+    tbody.innerHTML = posts.length ? posts.map(p => `
+        <tr>
+            <td>${p.id}</td>
+            <td><img src="${p.image}" alt="${p.title}" width="60" height="42" style="object-fit: cover; border-radius: 6px;"></td>
+            <td>${p.title}</td>
+            <td>${p.createdAt ? new Date(p.createdAt).toLocaleString('vi-VN') : ''}</td>
+            <td>
+                <button class="btn btn-sm btn-outline edit-news" data-id="${p.id}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger delete-news" data-id="${p.id}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('') : '<tr><td colspan="5" style="text-align: center;">Chưa có bài viết</td></tr>';
+
+    if (tbody.dataset.bound !== 'true') {
+        tbody.dataset.bound = 'true';
+        tbody.addEventListener('click', (e) => {
+            const editBtn = e.target.closest('.edit-news');
+            const deleteBtn = e.target.closest('.delete-news');
+            const id = editBtn?.dataset.id || deleteBtn?.dataset.id;
+            if (!id) return;
+            const all = getNewsPosts();
+            const post = all.find(x => String(x.id) === String(id));
+            if (editBtn) {
+                if (!post) return;
+                openNewsForm(post);
+                return;
+            }
+            if (deleteBtn) {
+                if (!confirm('Bạn có chắc muốn xóa bài viết này?')) return;
+                const next = all.filter(x => String(x.id) !== String(id));
+                saveNewsPosts(next);
+                loadNewsSection();
+                showToast('Đã xóa bài viết', 'success');
+            }
+        });
+    }
+}
+
+document.getElementById('add-news-btn')?.addEventListener('click', () => {
+    openNewsForm(null);
+});
+
+document.getElementById('cancel-news-form')?.addEventListener('click', () => {
+    closeNewsForm();
+});
+
+document.getElementById('news-form')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const idRaw = document.getElementById('news-id')?.value || '';
+    const title = (document.getElementById('news-title')?.value || '').trim();
+    const image = (document.getElementById('news-image')?.value || '').trim();
+    const content = (document.getElementById('news-content')?.value || '').trim();
+    if (!title || !image || !content) {
+        showToast('Vui lòng nhập đủ thông tin', 'error');
+        return;
+    }
+
+    const posts = getNewsPosts();
+    const now = new Date().toISOString();
+    if (idRaw) {
+        const idx = posts.findIndex(p => String(p.id) === String(idRaw));
+        if (idx >= 0) {
+            posts[idx] = { ...posts[idx], title, image, content, updatedAt: now };
+            saveNewsPosts(posts);
+            closeNewsForm();
+            loadNewsSection();
+            showToast('Cập nhật bài viết thành công', 'success');
+            return;
+        }
+    }
+    const nextId = posts.length ? Math.max(...posts.map(p => Number(p.id) || 0)) + 1 : 1;
+    posts.push({ id: nextId, title, image, content, createdAt: now, updatedAt: now });
+    saveNewsPosts(posts);
+    closeNewsForm();
+    loadNewsSection();
+    showToast('Thêm bài viết thành công', 'success');
+});
 
 // Các hàm xử lý sản phẩm
 document.getElementById('add-product-btn').addEventListener('click', () => {
