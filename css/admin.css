@@ -487,13 +487,22 @@
     min-height: calc(100vh - 70px);
 }
 
-/* Responsive cho mobile */
+/* Footer không bị sidebar đè */
+.admin-wrapper + .footer {
+    margin-left: 260px;
+    z-index: 1;
+    position: relative;
+}
+
 @media (max-width: 768px) {
     .admin-sidebar {
         width: 70px;
         top: 60px;
     }
     .admin-main {
+        margin-left: 70px;
+    }
+    .admin-wrapper + .footer {
         margin-left: 70px;
     }
     .admin-sidebar .sidebar-header h2,

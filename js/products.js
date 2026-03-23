@@ -76,9 +76,45 @@ function renderProducts(productsArray) {
     });
 }
 
-function filterProducts(category) {
+// function filterProducts(category) {
+//     const products = JSON.parse(localStorage.getItem('products')) || [];
+//     const filtered = category === 'all' ? products : products.filter(p => p.category === category);
+//     renderProducts(filtered);
+// }
+
+// // Gắn sự kiện cho các nút lọc
+// document.addEventListener('DOMContentLoaded', function() {
+//     loadAllProducts(); // Tải tất cả sản phẩm khi trang load
+    
+//     const filterBtns = document.querySelectorAll('.filter-btn');
+//     filterBtns.forEach(btn => {
+//         btn.addEventListener('click', function() {
+//             filterBtns.forEach(b => b.classList.remove('active'));
+//             this.classList.add('active');
+//             const cat = this.dataset.category;
+//             filterProducts(cat);
+//         });
+//     });
+// });
+
+// Biến toàn cục để lưu trạng thái lọc hiện tại
+let currentCategory = 'all';
+let currentPriceMin = 0;
+let currentPriceMax = 999999999;
+
+function applyFilters() {
     const products = JSON.parse(localStorage.getItem('products')) || [];
-    const filtered = category === 'all' ? products : products.filter(p => p.category === category);
+    
+    const filtered = products.filter(p => {
+        // Kiểm tra danh mục
+        const matchCategory = (currentCategory === 'all' || p.category === currentCategory);
+        
+        // Kiểm tra giá
+        const matchPrice = (p.price >= currentPriceMin && p.price <= currentPriceMax);
+        
+        return matchCategory && matchPrice;
+    });
+
     renderProducts(filtered);
 }
 
@@ -86,13 +122,61 @@ function filterProducts(category) {
 document.addEventListener('DOMContentLoaded', function() {
     loadAllProducts(); // Tải tất cả sản phẩm khi trang load
     
+    // Sự kiện cho nút lọc danh mục
     const filterBtns = document.querySelectorAll('.filter-btn');
     filterBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             filterBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            const cat = this.dataset.category;
-            filterProducts(cat);
+            
+            currentCategory = this.dataset.category;
+            applyFilters();
         });
     });
+
+    // Sự kiện cho nút lọc giá
+    const priceBtns = document.querySelectorAll('.price-btn');
+    if (priceBtns) {
+        priceBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                priceBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentPriceMin = parseInt(this.dataset.min);
+                currentPriceMax = parseInt(this.dataset.max);
+                applyFilters();
+            });
+        });
+    }
+
+    // THÊM MỚI: Sự kiện cho nút "Áp dụng" giá tự nhập
+    const applyCustomPriceBtn = document.getElementById('apply-custom-price');
+    if (applyCustomPriceBtn) {
+        applyCustomPriceBtn.addEventListener('click', function() {
+            const minInput = document.getElementById('min-price').value;
+            const maxInput = document.getElementById('max-price').value;
+
+            // Bỏ chọn (xóa active) các nút giá mặc định vì người dùng đang dùng giá tự nhập
+            const priceBtns = document.querySelectorAll('.price-btn');
+            priceBtns.forEach(b => b.classList.remove('active'));
+
+            // Gán giá trị, nếu để trống thì lấy mặc định là 0 hoặc vô hạn
+            currentPriceMin = minInput !== '' ? parseInt(minInput) : 0;
+            currentPriceMax = maxInput !== '' ? parseInt(maxInput) : 999999999;
+
+            // Đảo lại nếu người dùng nhập Giá từ > Giá đến
+            if (minInput !== '' && maxInput !== '' && currentPriceMin > currentPriceMax) {
+                let temp = currentPriceMin;
+                currentPriceMin = currentPriceMax;
+                currentPriceMax = temp;
+                
+                // Hiển thị lại đúng số trên ô input
+                document.getElementById('min-price').value = currentPriceMin;
+                document.getElementById('max-price').value = currentPriceMax;
+            }
+
+            // Gọi hàm lọc lại sản phẩm
+            applyFilters();
+        });
+    }
 });

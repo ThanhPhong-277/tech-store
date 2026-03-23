@@ -46,6 +46,19 @@
 
             <!-- Bộ lọc danh mục -->
 
+            <!-- <div class="category-filter">
+                <button class="filter-btn active" data-category="all">Tất cả</button>
+                <button class="filter-btn" data-category="laptop">Laptop Gaming</button>
+                <button class="filter-btn" data-category="monitor">Màn hình Gaming</button>
+                <button class="filter-btn" data-category="keyboard">Bàn phím Gaming</button>
+                <button class="filter-btn" data-category="mouse">Chuột Gaming</button>
+                <button class="filter-btn" data-category="headphone">Tai nghe Gaming</button>
+            </div> -->
+
+        <div class="filter-container">
+            
+        <div class="filter-group">
+            <label>Danh mục:</label>
             <div class="category-filter">
                 <button class="filter-btn active" data-category="all">Tất cả</button>
                 <button class="filter-btn" data-category="laptop">Laptop Gaming</button>
@@ -54,7 +67,25 @@
                 <button class="filter-btn" data-category="mouse">Chuột Gaming</button>
                 <button class="filter-btn" data-category="headphone">Tai nghe Gaming</button>
             </div>
+        </div>
 
+        <div class="filter-group">
+                <label>Khoảng giá:</label>
+                <div class="price-filter">
+                    <button class="price-btn active" data-min="0" data-max="999999999">Tất cả giá</button>
+                    <button class="price-btn" data-min="0" data-max="2000000">Dưới 2 triệu</button>
+                    <button class="price-btn" data-min="2000000" data-max="10000000">2 - 10 triệu</button>
+                    <button class="price-btn" data-min="10000000" data-max="30000000">10 - 30 triệu</button>
+                    <button class="price-btn" data-min="30000000" data-max="999999999">Trên 30 triệu</button>
+                </div>
+
+                <div class="custom-price-filter">
+                    <input type="number" id="min-price" placeholder="Giá từ..." min="0">
+                    <span> - </span>
+                    <input type="number" id="max-price" placeholder="Đến..." min="0">
+                    <button id="apply-custom-price" class="btn-apply-price">Áp dụng</button>
+                </div>
+            </div>
             <!-- Grid sản phẩm -->
 
             <div class="product-grid" id="product-grid"></div>
