@@ -203,9 +203,25 @@ function attachCartEvents() {
         input.addEventListener('change', function() {
             const index = this.dataset.index;
             const item = JSON.parse(localStorage.getItem('cart'))[index];
-            updateCartItem(item.id, parseInt(this.value), item.color);
+            let newQty = parseInt(this.value);
+
+            // Xử lý khi người dùng nhập số âm hoặc số 0
+            if (isNaN(newQty) || newQty <= 0) {
+                // Nếu muốn cảnh báo và đặt lại về 1 (hoặc số lượng trước đó)
+                showToast('Số lượng phải lớn hơn 0', 'error');
+                this.value = item.quantity; // Khôi phục lại số lượng cũ trên giao diện
+                return; 
+                
+                // HOẶC: Nếu bạn muốn khi nhập <= 0 sẽ tự động xóa sản phẩm, 
+                // thì bỏ comment dòng dưới và comment 3 dòng trên.
+                // updateCartItem(item.id, 0, item.color); 
+                // return;
+            }
+
+            updateCartItem(item.id, newQty, item.color);
         });
     });
+
     document.querySelectorAll('.remove-item').forEach(btn => {
         btn.addEventListener('click', function() {
             const index = this.dataset.index;
