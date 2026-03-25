@@ -67,7 +67,14 @@ function loadCart() {
     if (!container) return;
 
     if (cart.length === 0) {
-        container.innerHTML = '<p class="empty-cart">Giỏ hàng trống</p>';
+        container.innerHTML = `
+            <div style="text-align: center; padding: 50px 0;">
+                <p class="empty-cart" style="font-size: 1.2rem; margin-bottom: 20px;">Giỏ hàng của bạn đang trống</p>
+                <a href="products.html" class="btn btn-primary">
+                    <i class="fa-solid fa-cart-arrow-down"></i> Tiếp tục mua sắm
+                </a>
+            </div>
+        `;
         if (totalEl) totalEl.innerHTML = '';
         return;
     }

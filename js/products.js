@@ -25,8 +25,23 @@ function createProductCard(product) {
         window.location.href = `product-detail.html?id=${product.id}`;
     });
     div.querySelector('.add-to-cart').addEventListener('click', () => {
-        // Gọi hàm addToCart từ cart.js (phải có cart.js load trước)
         if (typeof addToCart === 'function') {
+            // Lấy giỏ hàng hiện tại
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Tính tổng số lượng sản phẩm này đã có trong giỏ hàng
+            let totalInCart = cart.reduce((sum, item) => item.id === product.id ? sum + item.quantity : sum, 0);
+
+            // Kiểm tra tổng số lượng sau khi thêm có vượt quá tồn kho không
+            if (totalInCart + 1 > product.stock) {
+                if (typeof showToast === 'function') {
+                    showToast(`Kho chỉ còn ${product.stock} cái. Bạn đã có ${totalInCart} cái trong giỏ!`, 'error');
+                } else {
+                    alert(`Kho chỉ còn ${product.stock} cái. Bạn đã có ${totalInCart} cái trong giỏ!`);
+                }
+                return; // Ngừng thực thi, không cho thêm vào giỏ
+            }
+
             addToCart(product.id, 1);
         } else {
             console.error('addToCart not defined');
