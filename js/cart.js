@@ -3,16 +3,23 @@
 function addToCart(productId, quantity, color = null) {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const product = products.find(p => p.id === productId);
+    
     if (!product) {
         showToast('Sản phẩm không tồn tại', 'error');
         return;
     }
-    if (product.stock < quantity) {
-        showToast('Số lượng sản phẩm không đủ', 'error');
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // TÍNH TỔNG SỐ LƯỢNG SẢN PHẨM NÀY ĐÃ CÓ TRONG GIỎ HÀNG (bao gồm tất cả các màu)
+    const totalInCart = cart.reduce((sum, item) => item.id === productId ? sum + item.quantity : sum, 0);
+
+    // KIỂM TRA CHẶN VƯỢT TỒN KHO TẠI LÕI
+    if (totalInCart + quantity > product.stock) {
+        showToast(`Vượt quá tồn kho! Kho còn ${product.stock}, bạn đang có ${totalInCart} cái trong giỏ.`, 'error');
         return;
     }
 
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existingIndex = cart.findIndex(item => item.id === productId && item.color === color);
     if (existingIndex >= 0) {
         cart[existingIndex].quantity += quantity;
@@ -26,6 +33,7 @@ function addToCart(productId, quantity, color = null) {
             color: color
         });
     }
+    
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     showToast('Đã thêm vào giỏ hàng', 'success');
