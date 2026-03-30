@@ -272,22 +272,29 @@ function updateCartTotal() {
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const deliveryType = document.querySelector('input[name="delivery-type"]:checked')?.value || 'shipping';
     let shipping = 0;
+    
     if (deliveryType === 'shipping') {
         shipping = subtotal >= 5000000 ? 0 : 50000;
     }
+    
     const discount = calculateDiscount(subtotal);
-    const total = subtotal + shipping - discount;
+    
+    // SỬA LỖI Ở ĐÂY: Chốt chặn không cho tổng tiền bị âm
+    const total = Math.max(0, subtotal + shipping - discount);
 
     const totalEl = document.getElementById('cart-total');
-    totalEl.innerHTML = `
-        <div class="total-row"><span>Tạm tính:</span> <span>${formatCurrency(subtotal)}</span></div>
-        <div class="total-row"><span>Phí vận chuyển:</span> <span>${shipping === 0 ? 'Miễn phí' : formatCurrency(shipping)}</span></div>
-        ${discount > 0 ? `<div class="total-row discount"><span>Giảm giá:</span> <span>-${formatCurrency(discount)}</span></div>` : ''}
-        <div class="total-row final"><span>Tổng cộng:</span> <span>${formatCurrency(total)}</span></div>
-        <button class="btn btn-primary btn-block" id="checkout-btn">Thanh toán</button>
-    `;
+    if (totalEl) {
+        totalEl.innerHTML = `
+            <div class="total-row"><span>Tạm tính:</span> <span>${typeof formatCurrency === 'function' ? formatCurrency(subtotal) : subtotal}</span></div>
+            <div class="total-row"><span>Phí vận chuyển:</span> <span>${shipping === 0 ? 'Miễn phí' : (typeof formatCurrency === 'function' ? formatCurrency(shipping) : shipping)}</span></div>
+            ${discount > 0 ? `<div class="total-row discount"><span>Giảm giá:</span> <span>-${typeof formatCurrency === 'function' ? formatCurrency(discount) : discount}</span></div>` : ''}
+            <div class="total-row final"><span>Tổng cộng:</span> <span>${typeof formatCurrency === 'function' ? formatCurrency(total) : total}</span></div>
+            <button class="btn btn-primary btn-block" id="checkout-btn">Thanh toán</button>
+        `;
 
-    document.getElementById('checkout-btn').addEventListener('click', checkout);
+        const checkoutBtn = document.getElementById('checkout-btn');
+        if (checkoutBtn) checkoutBtn.addEventListener('click', checkout);
+    }
 }
 
 function calculateDiscount(subtotal) {
