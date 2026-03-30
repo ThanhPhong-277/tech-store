@@ -316,6 +316,79 @@ function loadMembersSection() {
             </tr>
         `;
     }).join('') : '<tr><td colspan="8" style="text-align: center;">Không có thành viên</td></tr>';
+
+    // THÊM ĐOẠN NÀY ĐỂ GẮN SỰ KIỆN CLICK CHO NÚT "XEM"
+    document.querySelectorAll('.view-member').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            viewMember(this.dataset.id);
+        });
+    });
+}
+
+// Hàm hiển thị chi tiết thành viên
+function viewMember(userId) {
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    
+    const user = users.find(u => String(u.id) === String(userId));
+    if (!user) {
+        if(typeof showToast === 'function') showToast('Không tìm thấy thành viên', 'error');
+        return;
+    }
+
+    // Lấy toàn bộ lịch sử đơn hàng của người này (trừ đơn nháp)
+    const userOrders = orders.filter(o => String(o.userId) === String(userId) && o.status !== 'cart');
+    const totalSpent = userOrders
+        .filter(o => o.status === 'approved' || o.status === 'completed')
+        .reduce((sum, o) => sum + (o.total || 0), 0);
+
+    // Tạo HTML bảng lịch sử mua hàng
+    let ordersHtml = userOrders.length ? userOrders.map(o => `
+        <tr>
+            <td>#${o.id}</td>
+            <td>${new Date(o.createdAt).toLocaleDateString('vi-VN')}</td>
+            <td>${formatCurrency(o.total || 0)}</td>
+            <td><span class="order-status ${getOrderStatusClass(o.status)}">${getOrderStatusText(o.status)}</span></td>
+        </tr>
+    `).join('') : '<tr><td colspan="4" style="text-align: center;">Thành viên này chưa có đơn hàng nào</td></tr>';
+
+    // Tận dụng lại order-modal đã có sẵn bên trang HTML để hiển thị
+    const modal = document.getElementById('order-modal');
+    const content = document.getElementById('order-detail-content');
+    
+    if (modal && content) {
+        content.innerHTML = `
+            <h2>Hồ Sơ Thành Viên #${user.id}</h2>
+            <div class="order-info" style="margin-bottom: 20px;">
+                <p><strong>Tên đăng nhập:</strong> ${user.username}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Ngày tham gia:</strong> ${user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'Không rõ'}</p>
+                <p><strong>Tổng chi tiêu thực tế:</strong> <span style="color: #ff007f; font-weight: bold;">${formatCurrency(totalSpent)}</span></p>
+            </div>
+            
+            <h3>Lịch Sử Đơn Hàng</h3>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="table" style="width: 100%;">
+                    <thead style="position: sticky; top: 0; background: #1c1b1b;">
+                        <tr>
+                            <th>Mã ĐH</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>${ordersHtml}</tbody>
+                </table>
+            </div>
+        `;
+        
+        modal.style.display = 'flex';
+        modal.querySelector('.close-modal').onclick = () => modal.style.display = 'none';
+    } else {
+        // Fallback dự phòng nếu không tìm thấy modal
+        alert(`THÀNH VIÊN: ${user.username}\nEmail: ${user.email}\nTổng chi tiêu: ${formatCurrency(totalSpent)}\nSố đơn hàng: ${userOrders.length}`);
+    }
 }
 
 // Load cửa hàng

@@ -122,14 +122,16 @@ const sampleVouchers = [
 // Dữ liệu người dùng mẫu
 const sampleUsers = [
     { id: 1, username: 'admin', email: 'admin@techstore.com', password: 'admin123', isAdmin: true },
-    { id: 2, username: 'user1', email: 'user1@example.com', password: 'user123', isAdmin: false }
+    { id: 2, username: 'user1', email: 'user1@example.com', password: 'user123', isAdmin: false },
+    { id: 3, username: 'user2', email: 'user2@example.com', password: 'user123', isAdmin: false },
+    { id: 2, username: 'user3', email: 'user3@example.com', password: 'user123', isAdmin: false }
 ];
 
 const sampleNewsPosts = [
     {
         id: 1,
         title: 'ROG Strix Scar 18 (2024) chính thức lên kệ',
-        image: 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1200',
+        image: 'https://gamesmea.com/wp-content/uploads/2023/02/2023-ROG-Strix-SCAR-1618_G634JY_G634JZ_G834JY_G834JZ_Scenario-Photo_01.jpg',
         content: 'ROG Strix Scar 18 (2024) đã có mặt tại ROG TechStore với màn hình Nebula HDR, hiệu năng đỉnh cao và hệ thống tản nhiệt tối ưu cho gaming.\n\nTrải nghiệm trực tiếp tại cửa hàng và nhận ưu đãi dành riêng cho thành viên ROG.',
         createdAt: '2026-03-18T09:00:00.000Z',
         updatedAt: '2026-03-18T09:00:00.000Z'
@@ -137,7 +139,7 @@ const sampleNewsPosts = [
     {
         id: 2,
         title: 'Khai trương chi nhánh ROG Elite Store',
-        image: 'https://images.pexels.com/photos/19012039/pexels-photo-19012039.jpeg?auto=compress&cs=tinysrgb&w=1200',
+        image: 'https://omgluie.com/wp-content/uploads/2022/06/AMD-Launch-1280-x-800-V2-1.jpg',
         content: 'Chào mừng chi nhánh mới với khu vực trải nghiệm gaming, setup battle-station và hàng loạt phụ kiện ROG.\n\nĐến ngay để nhận voucher khai trương và quà tặng giới hạn.',
         createdAt: '2026-03-15T09:00:00.000Z',
         updatedAt: '2026-03-15T09:00:00.000Z'
@@ -145,7 +147,7 @@ const sampleNewsPosts = [
     {
         id: 3,
         title: 'ROG Elite Rewards: Tích điểm đổi quà cực chất',
-        image: 'https://images.pexels.com/photos/3587478/pexels-photo-3587478.jpeg?auto=compress&cs=tinysrgb&w=1200',
+        image: 'https://dlcdnwebimgs.asus.com/gain/0F25FFB8-D9A4-4014-9233-9FFAD450BFE5',
         content: 'Tích lũy ROG Points từ mỗi đơn hàng để đổi quà, voucher và phụ kiện giới hạn.\n\nBạn có thể theo dõi điểm và ưu đãi ngay trong trang tin tức.',
         createdAt: '2026-03-12T09:00:00.000Z',
         updatedAt: '2026-03-12T09:00:00.000Z'
