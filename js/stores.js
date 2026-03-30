@@ -17,8 +17,14 @@ function getStores() {
     return JSON.parse(localStorage.getItem('stores')) || [];
 }
 
+// ... (code cũ của bạn ở trên) ...
+
 // Lấy cửa hàng có chứa sản phẩm (cho cart)
 function getStoresByProductIds(productIds) {
     const stores = getStores();
     return stores.filter(store => store.products.some(pid => productIds.includes(pid)));
 }
+
+// THÊM DÒNG NÀY VÀO CUỐI FILE:
+// Tự động chạy khởi tạo dữ liệu mẫu khi tải trang
+initStores();
