@@ -189,17 +189,32 @@ function loadProductsSection() {
     loadStoreOptions();
 }
 
-// Load đơn hàng
-function loadOrdersSection() {
+// Load đơn hàng (Bản nâng cấp có chức năng Lọc)
+function loadOrdersSection(forcedStatus = null) {
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     const tbody = document.getElementById('orders-list');
-    
-    if (orders.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Không có đơn hàng</td></tr>';
+    if (!tbody) return;
+
+    // 1. Tự động kiểm tra xem nút lọc nào đang được ấn (active)
+    let currentStatus = forcedStatus;
+    if (!currentStatus) {
+        const activeFilter = document.querySelector('.filter-bar .filter-btn.active');
+        currentStatus = activeFilter ? activeFilter.dataset.status : 'all';
+    }
+
+    // 2. Lọc đơn hàng theo trạng thái
+    let filteredOrders = orders;
+    if (currentStatus !== 'all') {
+        filteredOrders = orders.filter(o => o.status === currentStatus);
+    }
+
+    if (filteredOrders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Không có đơn hàng nào phù hợp với bộ lọc</td></tr>';
         return;
     }
 
-    const sorted = [...orders].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // 3. Sắp xếp đơn mới nhất lên đầu và in ra bảng
+    const sorted = [...filteredOrders].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
     
     tbody.innerHTML = sorted.map(order => {
         const statusClass = getOrderStatusClass(order.status);
@@ -208,17 +223,17 @@ function loadOrdersSection() {
         return `
             <tr>
                 <td>#${order.id}</td>
-                <td>${order.customerName || 'Khách'}</td>
+                <td><strong>${order.customerName || 'Khách'}</strong></td>
                 <td>${new Date(order.createdAt).toLocaleString('vi-VN')}</td>
-                <td>${formatCurrency(order.total || 0)}</td>
+                <td>${typeof formatCurrency === 'function' ? formatCurrency(order.total || 0) : order.total}</td>
                 <td><span class="order-status ${statusClass}">${statusText}</span></td>
                 <td>${order.deliveryType === 'shipping' ? 'Giao hàng' : 'Tại cửa hàng'}</td>
                 <td>${getPaymentMethodText(order.paymentMethod)}</td>
                 <td>
                     <button class="btn btn-sm btn-outline view-order" data-id="${order.id}">
-                        <i class="fas fa-eye"></i>
+                        <i class="fas fa-eye"></i> Xem
                     </button>
-                    <select class="status-select" data-id="${order.id}" style="margin-top: 0.5rem;">
+                    <select class="status-select" data-id="${order.id}" style="margin-top: 0.5rem; padding: 4px; border-radius: 4px;">
                         <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Chờ xử lý</option>
                         <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Đang xử lý</option>
                         <option value="approved" ${order.status === 'approved' ? 'selected' : ''}>Đã duyệt</option>
@@ -231,7 +246,7 @@ function loadOrdersSection() {
         `;
     }).join('');
 
-    // Gắn sự kiện
+    // 4. Gắn lại sự kiện cho các nút trong bảng
     document.querySelectorAll('.view-order').forEach(btn => {
         btn.addEventListener('click', () => viewOrderDetail(btn.dataset.id));
     });
@@ -1205,4 +1220,142 @@ function getCategoryName(category) {
         'mouse': 'Chuột Gaming'
     };
     return map[category] || category;
+}
+
+// ==================== BỘ LỌC ĐƠN HÀNG ====================
+document.addEventListener('click', function(e) {
+    const filterBtn = e.target.closest('.filter-btn');
+    if (filterBtn) {
+        e.preventDefault();
+        
+        // 1. Xóa class 'active' của tất cả các nút cũ
+        const filterBar = filterBtn.closest('.filter-bar');
+        if (filterBar) {
+            filterBar.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        }
+        
+        // 2. Thêm class 'active' (đổi màu) cho nút vừa click
+        filterBtn.classList.add('active');
+        
+        // 3. Gọi hàm load lại bảng với dữ liệu mới
+        loadOrdersSection(filterBtn.dataset.status);
+    }
+});
+
+// ==================== XỬ LÝ QUẢN LÝ VOUCHER ====================
+
+// 1. Gắn sự kiện Click cho các nút của Voucher (Dùng Event Delegation)
+document.addEventListener('click', function(e) {
+    // Nút Thêm voucher mới
+    if (e.target.closest('#add-voucher-btn')) {
+        e.preventDefault();
+        const container = document.getElementById('voucher-form-container');
+        if(container) {
+            container.style.display = 'block';
+            document.getElementById('voucher-form-title').textContent = 'Thêm voucher mới';
+            document.getElementById('voucher-form').reset();
+            document.getElementById('voucher-id').value = '';
+        }
+    }
+
+    // Nút Hủy form voucher
+    if (e.target.closest('#cancel-voucher')) {
+        e.preventDefault();
+        document.getElementById('voucher-form-container').style.display = 'none';
+    }
+
+    // Nút Sửa voucher
+    const editVoucherBtn = e.target.closest('.edit-voucher');
+    if (editVoucherBtn) {
+        e.preventDefault();
+        editVoucher(editVoucherBtn.dataset.id);
+    }
+
+    // Nút Xóa voucher
+    const deleteVoucherBtn = e.target.closest('.delete-voucher');
+    if (deleteVoucherBtn) {
+        e.preventDefault();
+        deleteVoucher(deleteVoucherBtn.dataset.id);
+    }
+});
+
+// 2. Bắt sự kiện Lưu (Submit) Form Voucher
+document.addEventListener('submit', function(e) {
+    if (e.target.id === 'voucher-form') {
+        e.preventDefault();
+        const id = document.getElementById('voucher-id').value;
+        const voucherData = {
+            code: document.getElementById('voucher-code').value.trim().toUpperCase(),
+            type: document.getElementById('voucher-type').value,
+            value: parseFloat(document.getElementById('voucher-value').value) || 0,
+            minOrder: parseFloat(document.getElementById('voucher-min-order').value) || 0,
+            expiry: document.getElementById('voucher-expiry').value,
+            active: document.getElementById('voucher-active').value === 'true'
+        };
+
+        if (!voucherData.code || !voucherData.value) {
+            if(typeof showToast === 'function') showToast('Vui lòng điền đủ thông tin', 'error');
+            return;
+        }
+
+        let vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
+
+        if (id) {
+            // Sửa voucher
+            const index = vouchers.findIndex(v => v.id == id);
+            if (index >= 0) {
+                vouchers[index] = { ...vouchers[index], ...voucherData };
+                if(typeof showToast === 'function') showToast('Cập nhật voucher thành công', 'success');
+            }
+        } else {
+            // Thêm voucher
+            if (vouchers.some(v => v.code === voucherData.code)) {
+                if(typeof showToast === 'function') showToast('Mã voucher này đã tồn tại!', 'error');
+                return;
+            }
+            const newId = vouchers.length > 0 ? Math.max(...vouchers.map(v => Number(v.id) || 0)) + 1 : 1;
+            vouchers.push({ id: newId, ...voucherData });
+            if(typeof showToast === 'function') showToast('Thêm voucher thành công', 'success');
+        }
+
+        localStorage.setItem('vouchers', JSON.stringify(vouchers));
+        document.getElementById('voucher-form-container').style.display = 'none';
+        
+        // Cập nhật lại bảng voucher
+        loadVouchersSection(); 
+    }
+});
+
+// 3. Hàm đưa dữ liệu voucher lên form để Sửa
+function editVoucher(id) {
+    let vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
+    const v = vouchers.find(v => v.id == id);
+    if (!v) return;
+
+    document.getElementById('voucher-id').value = v.id;
+    document.getElementById('voucher-code').value = v.code;
+    document.getElementById('voucher-type').value = v.type || 'fixed';
+    document.getElementById('voucher-value').value = v.value;
+    document.getElementById('voucher-min-order').value = v.minOrder || 0;
+    document.getElementById('voucher-expiry').value = v.expiry || '';
+    document.getElementById('voucher-active').value = v.active !== false ? 'true' : 'false';
+
+    const titleEl = document.getElementById('voucher-form-title');
+    if (titleEl) titleEl.textContent = 'Sửa voucher';
+    
+    document.getElementById('voucher-form-container').style.display = 'block';
+    window.scrollTo(0, 0); // Cuộn lên đầu trang
+}
+
+// 4. Hàm xóa Voucher
+function deleteVoucher(id) {
+    if (!confirm('Bạn có chắc chắn muốn xóa voucher này?')) return;
+    let vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
+    vouchers = vouchers.filter(v => v.id != id);
+    localStorage.setItem('vouchers', JSON.stringify(vouchers));
+    
+    if(typeof showToast === 'function') showToast('Đã xóa voucher', 'success');
+    
+    // Cập nhật lại bảng voucher
+    loadVouchersSection();
 }
