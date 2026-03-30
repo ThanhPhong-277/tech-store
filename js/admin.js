@@ -1543,3 +1543,65 @@ function deleteStore(id) {
     // Cập nhật lại bảng
     loadStoresSection();
 }
+
+// ==================== XỬ LÝ CÀI ĐẶT & HỆ THỐNG ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Chức năng Backup Dữ liệu
+    const backupBtn = document.getElementById('backup-data-btn');
+    if (backupBtn) {
+        backupBtn.addEventListener('click', function() {
+            // Lấy toàn bộ dữ liệu trong LocalStorage
+            const allData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                allData[key] = localStorage.getItem(key);
+            }
+            
+            // Chuyển thành chuỗi JSON
+            const dataStr = JSON.stringify(allData, null, 2);
+            
+            // Tạo file và kích hoạt tải xuống
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ROG_TechStore_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            if(typeof showToast === 'function') showToast('Đã kết xuất dữ liệu hệ thống!', 'success');
+        });
+    }
+
+    // 2. Chức năng Xóa sạch dữ liệu (Wipe Data)
+    const wipeBtn = document.getElementById('wipe-data-btn');
+    if (wipeBtn) {
+        wipeBtn.addEventListener('click', function() {
+            const confirmWipe = confirm("CẢNH BÁO TỐI THƯỢNG!\n\nBạn có chắc chắn muốn xóa toàn bộ dữ liệu Đơn hàng, Sản phẩm, Users... không?\nHành động này không thể hoàn tác!");
+            
+            if (confirmWipe) {
+                // Xóa sạch LocalStorage
+                localStorage.clear();
+                
+                // Nạp lại tài khoản Admin mặc định để không bị khóa tài khoản
+                const defaultAdmin = [{
+                    id: 1,
+                    username: "admin",
+                    password: "123", // Mật khẩu gốc của bạn
+                    email: "admin@rog.com",
+                    isAdmin: true,
+                    createdAt: new Date().toISOString()
+                }];
+                localStorage.setItem('users', JSON.stringify(defaultAdmin));
+                
+                alert("ĐÃ HỦY DIỆT DỮ LIỆU. Hệ thống sẽ khởi động lại.");
+                // Đăng xuất và tải lại trang
+                localStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            }
+        });
+    }
+});
