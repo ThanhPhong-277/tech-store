@@ -145,8 +145,11 @@
     <script src="js/search.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            loadAllProducts();
-            updateCartCount();
+            // loadAllProducts();
+
+            if (typeof updateCartCount === 'function') {
+                updateCartCount();
+            }
         });
     </script>
 </body>
