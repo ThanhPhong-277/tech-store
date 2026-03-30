@@ -112,6 +112,8 @@ function renderProducts(productsArray) {
 //     });
 // });
 
+// ... (Các phần hàm ở trên giữ nguyên: createProductCard, loadAllProducts, renderProducts, applyFilters)
+
 // Biến toàn cục để lưu trạng thái lọc hiện tại
 let currentCategory = 'all';
 let currentPriceMin = 0;
@@ -133,21 +135,46 @@ function applyFilters() {
     renderProducts(filtered);
 }
 
-// Gắn sự kiện cho các nút lọc
+// ==== THAY THẾ TOÀN BỘ KHỐI CODE BÊN DƯỚI ====
+
+// Gắn sự kiện cho các nút lọc và xử lý URL
 document.addEventListener('DOMContentLoaded', function() {
-    loadAllProducts(); // Tải tất cả sản phẩm khi trang load
-    
-    // Sự kiện cho nút lọc danh mục
+    // 1. Kiểm tra tham số trên URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryFromUrl = urlParams.get('category');
+
+    // 2. Nếu có tham số, cập nhật danh mục hiện tại
+    if (categoryFromUrl) {
+        currentCategory = categoryFromUrl;
+    }
+
+    // 3. Xử lý nút lọc danh mục
     const filterBtns = document.querySelectorAll('.filter-btn');
     filterBtns.forEach(btn => {
+        // Xóa trạng thái active của tất cả các nút
+        btn.classList.remove('active');
+        
+        // Đặt trạng thái active cho nút khớp với danh mục hiện tại (từ URL hoặc mặc định)
+        if (btn.dataset.category === currentCategory) {
+            btn.classList.add('active');
+        }
+
+        // Sự kiện click chọn danh mục
         btn.addEventListener('click', function() {
             filterBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
             currentCategory = this.dataset.category;
+            
+            // Xóa tham số trên URL khi người dùng tự bấm lọc tay cho đẹp
+            window.history.pushState({}, '', 'products.html');
+            
             applyFilters();
         });
     });
+
+    // 4. Gọi applyFilters() ngay lập tức để lọc theo URL, BỎ gọi loadAllProducts()
+    applyFilters(); 
 
     // Sự kiện cho nút lọc giá
     const priceBtns = document.querySelectorAll('.price-btn');
@@ -164,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // THÊM MỚI: Sự kiện cho nút "Áp dụng" giá tự nhập
+    // Sự kiện cho nút "Áp dụng" giá tự nhập
     const applyCustomPriceBtn = document.getElementById('apply-custom-price');
     if (applyCustomPriceBtn) {
         applyCustomPriceBtn.addEventListener('click', function() {
