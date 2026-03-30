@@ -1432,3 +1432,114 @@ function deleteVoucher(id) {
     // Cập nhật lại bảng voucher
     loadVouchersSection();
 }
+
+// ==================== XỬ LÝ QUẢN LÝ CỬA HÀNG ====================
+
+// 1. Gắn sự kiện Click cho các nút của Cửa hàng
+document.addEventListener('click', function(e) {
+    // Nút Thêm cửa hàng mới
+    if (e.target.closest('#add-store-btn')) {
+        e.preventDefault();
+        const container = document.getElementById('store-form-container');
+        if (container) {
+            container.style.display = 'block';
+            const title = document.getElementById('store-form-title');
+            if (title) title.textContent = 'Thêm cửa hàng mới';
+            document.getElementById('store-form').reset();
+            document.getElementById('store-id').value = '';
+        }
+    }
+
+    // Nút Hủy form cửa hàng
+    if (e.target.closest('#cancel-store-form') || e.target.closest('#cancel-store')) {
+        e.preventDefault();
+        const container = document.getElementById('store-form-container');
+        if (container) container.style.display = 'none';
+    }
+
+    // Nút Sửa cửa hàng
+    const editStoreBtn = e.target.closest('.edit-store');
+    if (editStoreBtn) {
+        e.preventDefault();
+        editStore(editStoreBtn.dataset.id);
+    }
+
+    // Nút Xóa cửa hàng
+    const deleteStoreBtn = e.target.closest('.delete-store');
+    if (deleteStoreBtn) {
+        e.preventDefault();
+        deleteStore(deleteStoreBtn.dataset.id);
+    }
+});
+
+// 2. Bắt sự kiện Lưu (Submit) Form Cửa hàng
+document.addEventListener('submit', function(e) {
+    if (e.target.id === 'store-form') {
+        e.preventDefault();
+        const id = document.getElementById('store-id').value;
+        const storeData = {
+            name: document.getElementById('store-name').value.trim(),
+            address: document.getElementById('store-address').value.trim(),
+            phone: document.getElementById('store-phone').value.trim()
+        };
+
+        if (!storeData.name || !storeData.address || !storeData.phone) {
+            if(typeof showToast === 'function') showToast('Vui lòng điền đủ thông tin', 'error');
+            return;
+        }
+
+        let stores = JSON.parse(localStorage.getItem('stores')) || [];
+
+        if (id) {
+            // Sửa cửa hàng
+            const index = stores.findIndex(s => s.id == id);
+            if (index >= 0) {
+                stores[index] = { ...stores[index], ...storeData };
+                if(typeof showToast === 'function') showToast('Cập nhật cửa hàng thành công', 'success');
+            }
+        } else {
+            // Thêm cửa hàng
+            const newId = stores.length > 0 ? Math.max(...stores.map(s => Number(s.id) || 0)) + 1 : 1;
+            storeData.products = []; // Cửa hàng mới mặc định chưa có sản phẩm nào
+            stores.push({ id: newId, ...storeData });
+            if(typeof showToast === 'function') showToast('Thêm cửa hàng thành công', 'success');
+        }
+
+        localStorage.setItem('stores', JSON.stringify(stores));
+        document.getElementById('store-form-container').style.display = 'none';
+        
+        // Cập nhật lại bảng danh sách cửa hàng
+        loadStoresSection(); 
+    }
+});
+
+// 3. Hàm đưa dữ liệu cửa hàng lên form để Sửa
+function editStore(id) {
+    let stores = JSON.parse(localStorage.getItem('stores')) || [];
+    const s = stores.find(s => s.id == id);
+    if (!s) return;
+
+    document.getElementById('store-id').value = s.id;
+    document.getElementById('store-name').value = s.name;
+    document.getElementById('store-address').value = s.address;
+    document.getElementById('store-phone').value = s.phone;
+
+    const titleEl = document.getElementById('store-form-title');
+    if (titleEl) titleEl.textContent = 'Sửa cửa hàng';
+    
+    document.getElementById('store-form-container').style.display = 'block';
+    window.scrollTo(0, 0); // Cuộn lên đầu trang
+}
+
+// 4. Hàm xóa Cửa hàng
+function deleteStore(id) {
+    if (!confirm('Bạn có chắc chắn muốn xóa cửa hàng này?')) return;
+    let stores = JSON.parse(localStorage.getItem('stores')) || [];
+    stores = stores.filter(s => s.id != id);
+    localStorage.setItem('stores', JSON.stringify(stores));
+    
+    if(typeof showToast === 'function') showToast('Đã xóa cửa hàng', 'success');
+    
+    // Cập nhật lại bảng
+    loadStoresSection();
+}
