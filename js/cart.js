@@ -203,14 +203,18 @@ function loadCart() {
         </div>
     `;
 
-    container.innerHTML = html;
+container.innerHTML = html;
 
     updateCartTotal();
 
-    attachCartEvents();
-    initLocationSelects();
-    initStoreSelect();
-    initVoucherSelect();
+    try { attachCartEvents(); } catch (e) { console.error("Lỗi attachCartEvents:", e); }
+    try { 
+        if (typeof initLocationSelects === 'function') initLocationSelects(); 
+    } catch (e) { console.error("Lỗi initLocationSelects:", e); }
+    
+    try { initStoreSelect(); } catch (e) { console.error("Lỗi initStoreSelect:", e); }
+    
+    try { initVoucherSelect(); } catch (e) { console.error("Lỗi initVoucherSelect:", e); }
 }
 
 function attachCartEvents() {
@@ -471,42 +475,24 @@ function syncSelectedVoucherUI() {
     updateCartTotal();
 }
 
-function initStoreSelect() {
-    const select = document.getElementById('store-select');
-    if (!select) return;
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const productIds = cart.map(item => item.id);
-    const stores = getStoresByProductIds(productIds);
-    select.innerHTML = '<option value="">Chọn cửa hàng</option>';
-    stores.forEach(store => {
-        const option = document.createElement('option');
-        option.value = store.id;
-        option.textContent = store.name;
-        select.appendChild(option);
-    });
-    select.addEventListener('change', function() {
-        const storeId = this.value;
-        const store = stores.find(s => s.id == storeId);
-        const detailDiv = document.getElementById('store-detail');
-        if (store) {
-            detailDiv.innerHTML = `<p>Địa chỉ: ${store.address}<br>Điện thoại: ${store.phone}</p>`;
-        } else {
-            detailDiv.innerHTML = '';
-        }
-    });
-}
-
-// Khởi tạo select cửa hàng dựa trên sản phẩm trong giỏ
+// Gộp chung và sửa lỗi biến sampleStores không tồn tại
 function initStoreSelect() {
     const storeSelect = document.getElementById('store-select');
     if (!storeSelect) return;
+    
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartProductIds = cart.map(item => item.id);
-    const stores = JSON.parse(localStorage.getItem('stores')) || sampleStores; // cần có sampleStores từ data.js
-    // Lọc cửa hàng có chứa ít nhất 1 sản phẩm trong giỏ
-    const availableStores = stores.filter(store => 
-        store.products.some(pid => cartProductIds.includes(pid))
-    );
+    
+    let stores = [];
+    try { stores = JSON.parse(localStorage.getItem('stores')) || []; } catch(e) {}
+    
+    let availableStores = stores;
+    if (stores.length > 0 && stores[0].products) {
+        availableStores = stores.filter(store => 
+            store.products && store.products.some(pid => cartProductIds.includes(pid))
+        );
+    }
+
     storeSelect.innerHTML = '<option value="">Chọn cửa hàng</option>';
     availableStores.forEach(store => {
         const opt = document.createElement('option');
@@ -521,7 +507,7 @@ function initStoreSelect() {
         if (storeId) {
             const store = stores.find(s => s.id == storeId);
             if (store) {
-                detailDiv.innerHTML = `<p><i class="fas fa-map-marker-alt"></i> ${store.address}</p><p><i class="fas fa-phone"></i> ${store.phone}</p>`;
+                detailDiv.innerHTML = `<p><i class="fas fa-map-marker-alt"></i> ${store.address || ''}</p><p><i class="fas fa-phone"></i> ${store.phone || ''}</p>`;
             }
         } else {
             detailDiv.innerHTML = '';

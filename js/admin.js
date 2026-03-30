@@ -1259,7 +1259,7 @@ document.addEventListener('click', function(e) {
     }
 
     // Nút Hủy form voucher
-    if (e.target.closest('#cancel-voucher')) {
+    if (e.target.closest('#cancel-voucher-form')) {
         e.preventDefault();
         document.getElementById('voucher-form-container').style.display = 'none';
     }

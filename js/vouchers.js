@@ -71,10 +71,14 @@ function loadUserVouchersToSelect() {
     const select = document.getElementById('voucher-select');
     if (!select) return;
     
-    // Đặt lại option mặc định
     select.innerHTML = '<option value="">-- Chọn mã giảm giá --</option>';
     
-    const vouchers = getAvailableVouchersForCart();
+    let vouchers = [];
+    try {
+        vouchers = getAvailableVouchersForCart();
+    } catch(e) {
+        console.error("Lỗi khi lấy dữ liệu Voucher:", e);
+    }
     
     if (!vouchers || vouchers.length === 0) {
         const opt = document.createElement('option');
@@ -88,9 +92,11 @@ function loadUserVouchersToSelect() {
         const opt = document.createElement('option');
         opt.value = v.id;
         
-        // Định dạng text hiển thị
-        const valueText = v.type === 'percent' ? v.value + '%' : formatCurrency(v.value);
-        const minText = v.minOrder > 0 ? `Đơn từ ${formatCurrency(v.minOrder)}` : 'Mọi đơn hàng';
+        // Xử lý an toàn cho định dạng tiền tệ
+        const val = v.value || 0;
+        const min = v.minOrder || 0;
+        const valueText = v.type === 'percent' ? val + '%' : (typeof formatCurrency === 'function' ? formatCurrency(val) : val + 'đ');
+        const minText = min > 0 ? `Đơn từ ${typeof formatCurrency === 'function' ? formatCurrency(min) : min + 'đ'}` : 'Mọi đơn hàng';
         
         opt.textContent = `Mã: ${v.code} - Giảm ${valueText} (${minText})`;
         select.appendChild(opt);
