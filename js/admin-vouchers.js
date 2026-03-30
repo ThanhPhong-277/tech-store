@@ -23,89 +23,82 @@ function loadAdminVouchers() {
         `;
         tbody.appendChild(row);
     });
-
-    // Gắn lại sự kiện cho các nút Sửa/Xóa sau khi render lại bảng
-    document.querySelectorAll('.edit-voucher').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            editVoucher(this.dataset.id);
-        });
-    });
-    
-    document.querySelectorAll('.delete-voucher').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            deleteVoucher(this.dataset.id);
-        });
-    });
 }
 
-function initAdminVoucherEvents() {
-    const addBtn = document.getElementById('add-voucher-btn');
-    const cancelBtn = document.getElementById('cancel-voucher');
-    const form = document.getElementById('voucher-form');
-
-    if (addBtn) {
-        addBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('voucher-form-container').style.display = 'block';
-            document.getElementById('voucher-form-title').textContent = 'Thêm voucher mới';
-            document.getElementById('voucher-form').reset();
-            document.getElementById('voucher-id').value = '';
-        });
+// SỬ DỤNG EVENT DELEGATION - Bắt sự kiện trên toàn trang
+document.addEventListener('click', function(e) {
+    // Nút Thêm voucher mới
+    if (e.target.closest('#add-voucher-btn')) {
+        e.preventDefault();
+        document.getElementById('voucher-form-container').style.display = 'block';
+        document.getElementById('voucher-form-title').textContent = 'Thêm voucher mới';
+        document.getElementById('voucher-form').reset();
+        document.getElementById('voucher-id').value = '';
     }
 
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('voucher-form-container').style.display = 'none';
-        });
+    // Nút Hủy
+    if (e.target.closest('#cancel-voucher')) {
+        e.preventDefault();
+        document.getElementById('voucher-form-container').style.display = 'none';
     }
 
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = document.getElementById('voucher-id').value;
-            const voucherData = {
-                code: document.getElementById('voucher-code').value.trim().toUpperCase(),
-                type: document.getElementById('voucher-type').value,
-                value: parseFloat(document.getElementById('voucher-value').value),
-                minOrder: parseFloat(document.getElementById('voucher-min-order').value) || 0,
-                expiry: document.getElementById('voucher-expiry').value,
-                active: document.getElementById('voucher-active').value === 'true'
-            };
+    // Nút Sửa
+    const editBtn = e.target.closest('.edit-voucher');
+    if (editBtn) {
+        e.preventDefault();
+        editVoucher(editBtn.dataset.id);
+    }
 
-            if (!voucherData.code || !voucherData.value || !voucherData.expiry) {
-                showToast('Vui lòng điền đầy đủ thông tin', 'error');
-                return;
+    // Nút Xóa
+    const deleteBtn = e.target.closest('.delete-voucher');
+    if (deleteBtn) {
+        e.preventDefault();
+        deleteVoucher(deleteBtn.dataset.id);
+    }
+});
+
+// Bắt sự kiện Submit form
+document.addEventListener('submit', function(e) {
+    if (e.target.id === 'voucher-form') {
+        e.preventDefault();
+        const id = document.getElementById('voucher-id').value;
+        const voucherData = {
+            code: document.getElementById('voucher-code').value.trim().toUpperCase(),
+            type: document.getElementById('voucher-type').value,
+            value: parseFloat(document.getElementById('voucher-value').value),
+            minOrder: parseFloat(document.getElementById('voucher-min-order').value) || 0,
+            expiry: document.getElementById('voucher-expiry').value,
+            active: document.getElementById('voucher-active').value === 'true'
+        };
+
+        if (!voucherData.code || !voucherData.value || !voucherData.expiry) {
+            showToast('Vui lòng điền đầy đủ thông tin', 'error');
+            return;
+        }
+
+        let vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
+        
+        if (id) {
+            const index = vouchers.findIndex(v => v.id == id);
+            if (index >= 0) {
+                vouchers[index] = { ...vouchers[index], ...voucherData };
+                showToast('Cập nhật voucher thành công', 'success');
             }
-
-            let vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
-            
-            // Kiểm tra trùng mã (chỉ khi thêm mới)
-            if (!id && vouchers.some(v => v.code === voucherData.code)) {
+        } else {
+            if (vouchers.some(v => v.code === voucherData.code)) {
                 showToast('Mã voucher này đã tồn tại!', 'error');
                 return;
             }
-
-            if (id) {
-                const index = vouchers.findIndex(v => v.id == id);
-                if (index >= 0) {
-                    vouchers[index] = { ...vouchers[index], ...voucherData };
-                    showToast('Cập nhật voucher thành công', 'success');
-                }
-            } else {
-                const newId = vouchers.length > 0 ? Math.max(...vouchers.map(v => v.id)) + 1 : 1;
-                vouchers.push({ id: newId, ...voucherData });
-                showToast('Thêm voucher thành công', 'success');
-            }
-            
-            localStorage.setItem('vouchers', JSON.stringify(vouchers));
-            document.getElementById('voucher-form-container').style.display = 'none';
-            loadAdminVouchers();
-        });
+            const newId = vouchers.length > 0 ? Math.max(...vouchers.map(v => v.id)) + 1 : 1;
+            vouchers.push({ id: newId, ...voucherData });
+            showToast('Thêm voucher thành công', 'success');
+        }
+        
+        localStorage.setItem('vouchers', JSON.stringify(vouchers));
+        document.getElementById('voucher-form-container').style.display = 'none';
+        loadAdminVouchers();
     }
-}
+});
 
 function editVoucher(id) {
     const vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
@@ -122,22 +115,17 @@ function editVoucher(id) {
     
     document.getElementById('voucher-form-title').textContent = 'Sửa voucher';
     document.getElementById('voucher-form-container').style.display = 'block';
-    document.getElementById('voucher-code').focus();
+    window.scrollTo(0, 0);
 }
 
 function deleteVoucher(id) {
-    if (!confirm('Bạn có chắc chắn muốn xóa voucher này không?')) return;
+    if (!confirm('Bạn có chắc chắn muốn xóa voucher này?')) return;
     let vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
     vouchers = vouchers.filter(v => v.id != id);
     localStorage.setItem('vouchers', JSON.stringify(vouchers));
     loadAdminVouchers();
     showToast('Đã xóa voucher', 'success');
 }
-
-// Khởi tạo các sự kiện tĩnh ngay khi DOM load xong để tránh lỗi không click được
-document.addEventListener('DOMContentLoaded', () => {
-    initAdminVoucherEvents();
-});
 
 // // admin-vouchers.js
 
