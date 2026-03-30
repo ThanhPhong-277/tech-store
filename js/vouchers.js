@@ -70,21 +70,29 @@ function clearSelectedVoucher() {
 function loadUserVouchersToSelect() {
     const select = document.getElementById('voucher-select');
     if (!select) return;
-    select.innerHTML = '<option value="">Chọn voucher</option>';
+    
+    // Đặt lại option mặc định
+    select.innerHTML = '<option value="">-- Chọn mã giảm giá --</option>';
+    
     const vouchers = getAvailableVouchersForCart();
-    if (!vouchers.length) {
+    
+    if (!vouchers || vouchers.length === 0) {
         const opt = document.createElement('option');
         opt.value = '';
-        opt.textContent = 'Hiện chưa có voucher';
+        opt.textContent = 'Hiện chưa có mã giảm giá nào';
         select.appendChild(opt);
         return;
     }
+    
     vouchers.forEach(v => {
         const opt = document.createElement('option');
         opt.value = v.id;
+        
+        // Định dạng text hiển thị
         const valueText = v.type === 'percent' ? v.value + '%' : formatCurrency(v.value);
-        const minText = v.minOrder ? `Tối thiểu ${formatCurrency(v.minOrder)}` : 'Không giới hạn đơn tối thiểu';
-        opt.textContent = `${v.code} - ${valueText} (${minText})`;
+        const minText = v.minOrder > 0 ? `Đơn từ ${formatCurrency(v.minOrder)}` : 'Mọi đơn hàng';
+        
+        opt.textContent = `Mã: ${v.code} - Giảm ${valueText} (${minText})`;
         select.appendChild(opt);
     });
 }
