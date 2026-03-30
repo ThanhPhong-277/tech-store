@@ -12,7 +12,7 @@
 </head>
 <body>
     <!-- Header chính với các link điều hướng -->
-    <header class="header">
+<header class="header">
         <div class="container">
             <div class="logo">
                 <a href="index.html"><img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="Logo" class="logo-img"><span class="logo-text">TechStore</span></a>
@@ -22,13 +22,16 @@
                     <li><a href="index.html">Trang chủ</a></li>
                     <li><a href="products.html">Sản phẩm</a></li>
                     <li><a href="news.html">Tin tức</a></li>
-                    <li><a href="my-orders.html">Đơn hàng</a></li>
                     <li><a href="cart.html">Giỏ hàng <span id="cart-count" class="cart-count">0</span></a></li>
-                    <li><a href="admin.html" class="active">Quản trị</a></li>
                 </ul>
             </nav>
+            <div class="header-search" data-site-search data-search-mode="redirect">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="site-search-input" type="text" placeholder="Tìm sản phẩm..." autocomplete="off">
+                <div class="search-suggest" style="display: none;"></div>
+            </div>
             <div class="auth-buttons">
-                <div id="guest-buttons" style="display: none;">
+                <div id="guest-buttons">
                     <a href="login.html" class="btn btn-login">Đăng nhập</a>
                     <a href="register.html" class="btn btn-register">Đăng ký</a>
                 </div>
