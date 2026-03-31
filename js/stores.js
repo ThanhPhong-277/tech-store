@@ -25,6 +25,5 @@ function getStoresByProductIds(productIds) {
     return stores.filter(store => store.products.some(pid => productIds.includes(pid)));
 }
 
-// THÊM DÒNG NÀY VÀO CUỐI FILE:
 // Tự động chạy khởi tạo dữ liệu mẫu khi tải trang
 initStores();
