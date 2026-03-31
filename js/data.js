@@ -990,9 +990,8 @@ function initializeData() {
     if (!localStorage.getItem('users')) {
         localStorage.setItem('users', JSON.stringify(sampleUsers));
     }
-    //Khởi tạo tin tức
-    const existingNewsRaw = localStorage.getItem('news_posts');
-    if (!existingNewsRaw || existingNewsRaw === '[]') {
+    // Khởi tạo tin tức
+    if (!localStorage.getItem('news_posts')) {
         localStorage.setItem('news_posts', JSON.stringify(sampleNewsPosts));
     }
     // Giỏ hàng

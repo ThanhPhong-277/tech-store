@@ -150,6 +150,7 @@
                         <div class="news-slide-content">
                             <h2>${escapeHtml(p.title)}</h2>
                             <p>${escapeHtml(toExcerpt(p.content, 140))}</p>
+                            <a href="news-detail.html?id=${p.id}" class="btn" style="margin-top: 15px; display: inline-block; background: #e02424; color: white; padding: 8px 20px; text-decoration: none; border-radius: 4px;">Đọc thêm</a>
                         </div>
                     </div>
                 `).join('')}
