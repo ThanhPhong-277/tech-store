@@ -62,9 +62,9 @@ function loadProductDetail() {
     document.getElementById('product-detail').innerHTML = html;
 
     // Xử lý sự kiện
-    document.querySelector('.add-to-cart').addEventListener('click', function() {
+    document.querySelector('.add-to-cart').addEventListener('click', function () {
         let qty = parseInt(document.getElementById('quantity').value);
-        
+
         // Kiểm tra nếu số lượng <= 0 hoặc không phải là số hợp lệ
         if (isNaN(qty) || qty <= 0) {
             showToast('Vui lòng nhập số lượng hợp lệ (lớn hơn 0)', 'error');
@@ -76,9 +76,9 @@ function loadProductDetail() {
         addToCart(product.id, qty, selectedColor);
     });
 
-    document.querySelector('.buy-now').addEventListener('click', function() {
+    document.querySelector('.buy-now').addEventListener('click', function () {
         let qty = parseInt(document.getElementById('quantity').value);
-        
+
         // Kiểm tra nếu số lượng <= 0 hoặc không phải là số hợp lệ
         if (isNaN(qty) || qty <= 0) {
             showToast('Vui lòng nhập số lượng hợp lệ (lớn hơn 0)', 'error');
@@ -88,17 +88,17 @@ function loadProductDetail() {
 
         const selectedColor = document.querySelector('.color-option.selected')?.dataset.color || null;
         addToCart(product.id, qty, selectedColor);
-        
+
         // Chỉ chuyển trang nếu hàm addToCart chạy thành công
         // (Bạn có thể kiểm tra thêm logic này nếu cần, nhưng cơ bản như vậy là ổn)
         setTimeout(() => {
-             window.location.href = 'cart.html';
+            window.location.href = 'cart.html';
         }, 500); // Đợi 1 chút để toast message hiện lên (tùy chọn)
     });
 
     // Xử lý chọn màu
     document.querySelectorAll('.color-option').forEach(opt => {
-        opt.addEventListener('click', function() {
+        opt.addEventListener('click', function () {
             document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
             this.classList.add('selected');
         });

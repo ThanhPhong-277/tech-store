@@ -21,14 +21,14 @@ function createProductCard(product) {
             </div>
         </div>
     `;
-div.querySelector('.view-detail').addEventListener('click', () => {
+    div.querySelector('.view-detail').addEventListener('click', () => {
         openQuickView(product);
     });
     div.querySelector('.add-to-cart').addEventListener('click', () => {
         if (typeof addToCart === 'function') {
             // Lấy giỏ hàng hiện tại
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            
+
             // Tính tổng số lượng sản phẩm này đã có trong giỏ hàng
             let totalInCart = cart.reduce((sum, item) => item.id === product.id ? sum + item.quantity : sum, 0);
 
@@ -54,21 +54,21 @@ function loadAllProducts() {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const grid = document.getElementById('product-grid');
     const noProducts = document.getElementById('no-products');
-    
+
     if (!grid) {
         console.error('Không tìm thấy #product-grid');
         return;
     }
-    
+
     if (products.length === 0) {
         grid.innerHTML = '';
         if (noProducts) noProducts.style.display = 'block';
         return;
     }
-    
+
     grid.innerHTML = '';
     if (noProducts) noProducts.style.display = 'none';
-    
+
     products.forEach(prod => {
         const card = createProductCard(prod);
         grid.appendChild(card);
@@ -100,7 +100,7 @@ function renderProducts(productsArray) {
 // // Gắn sự kiện cho các nút lọc
 // document.addEventListener('DOMContentLoaded', function() {
 //     loadAllProducts(); // Tải tất cả sản phẩm khi trang load
-    
+
 //     const filterBtns = document.querySelectorAll('.filter-btn');
 //     filterBtns.forEach(btn => {
 //         btn.addEventListener('click', function() {
@@ -121,24 +121,22 @@ let currentPriceMax = 999999999;
 
 function applyFilters() {
     const products = JSON.parse(localStorage.getItem('products')) || [];
-    
+
     const filtered = products.filter(p => {
         // Kiểm tra danh mục
         const matchCategory = (currentCategory === 'all' || p.category === currentCategory);
-        
+
         // Kiểm tra giá
         const matchPrice = (p.price >= currentPriceMin && p.price <= currentPriceMax);
-        
+
         return matchCategory && matchPrice;
     });
 
     renderProducts(filtered);
 }
 
-// ==== THAY THẾ TOÀN BỘ KHỐI CODE BÊN DƯỚI ====
-
 // Gắn sự kiện cho các nút lọc và xử lý URL
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // 1. Kiểm tra tham số trên URL
     const urlParams = new URLSearchParams(window.location.search);
     const categoryFromUrl = urlParams.get('category');
@@ -153,37 +151,37 @@ document.addEventListener('DOMContentLoaded', function() {
     filterBtns.forEach(btn => {
         // Xóa trạng thái active của tất cả các nút
         btn.classList.remove('active');
-        
+
         // Đặt trạng thái active cho nút khớp với danh mục hiện tại (từ URL hoặc mặc định)
         if (btn.dataset.category === currentCategory) {
             btn.classList.add('active');
         }
 
         // Sự kiện click chọn danh mục
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             filterBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            
+
             currentCategory = this.dataset.category;
-            
+
             // Xóa tham số trên URL khi người dùng tự bấm lọc tay cho đẹp
             window.history.pushState({}, '', 'products.html');
-            
+
             applyFilters();
         });
     });
 
     // 4. Gọi applyFilters() ngay lập tức để lọc theo URL, BỎ gọi loadAllProducts()
-    applyFilters(); 
+    applyFilters();
 
     // Sự kiện cho nút lọc giá
     const priceBtns = document.querySelectorAll('.price-btn');
     if (priceBtns) {
         priceBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 priceBtns.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                
+
                 currentPriceMin = parseInt(this.dataset.min);
                 currentPriceMax = parseInt(this.dataset.max);
                 applyFilters();
@@ -194,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sự kiện cho nút "Áp dụng" giá tự nhập
     const applyCustomPriceBtn = document.getElementById('apply-custom-price');
     if (applyCustomPriceBtn) {
-        applyCustomPriceBtn.addEventListener('click', function() {
+        applyCustomPriceBtn.addEventListener('click', function () {
             const minInput = document.getElementById('min-price').value;
             const maxInput = document.getElementById('max-price').value;
 
@@ -211,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let temp = currentPriceMin;
                 currentPriceMin = currentPriceMax;
                 currentPriceMax = temp;
-                
+
                 // Hiển thị lại đúng số trên ô input
                 document.getElementById('min-price').value = currentPriceMin;
                 document.getElementById('max-price').value = currentPriceMax;
@@ -270,7 +268,7 @@ function openQuickView(product) {
 
     if (!isOutOfStock) {
         const qtyInput = document.getElementById('qv-qty');
-        document.getElementById('qv-minus').onclick = () => { if(qtyInput.value > 1) qtyInput.value--; };
+        document.getElementById('qv-minus').onclick = () => { if (qtyInput.value > 1) qtyInput.value--; };
         document.getElementById('qv-plus').onclick = () => {
             if (parseInt(qtyInput.value) < product.stock - totalInCart) qtyInput.value++;
             else showToast("Vượt quá số lượng trong kho", "warning");

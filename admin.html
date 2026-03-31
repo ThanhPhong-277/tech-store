@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,12 +12,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
+
 <body>
     <!-- Header chính với các link điều hướng -->
-<header class="header">
+    <header class="header">
         <div class="container">
             <div class="logo">
-                <a href="index.html"><img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="Logo" class="logo-img"><span class="logo-text">TechStore</span></a>
+                <a href="index.html"><img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png"
+                        alt="Logo" class="logo-img"><span class="logo-text">TechStore</span></a>
             </div>
             <nav class="main-nav">
                 <ul>
@@ -190,7 +193,7 @@
                             </button>
                         </div>
                     </div>
-                
+
                     <!-- KPI Cards -->
                     <div class="kpi-grid">
                         <div class="kpi-card">
@@ -269,7 +272,7 @@
                             </div>
                         </div>
                     </div>
-                
+
                     <!-- Biểu đồ dòng 1 -->
                     <div class="charts-row">
                         <div class="chart-card">
@@ -285,7 +288,7 @@
                             </div>
                         </div>
                     </div>
-                
+
                     <!-- Biểu đồ dòng 2 -->
                     <div class="charts-row">
                         <div class="chart-card">
@@ -301,7 +304,7 @@
                             </div>
                         </div>
                     </div>
-                
+
                     <!-- Biểu đồ dòng 3 -->
                     <div class="charts-row">
                         <div class="chart-card">
@@ -340,7 +343,7 @@
                             </div>
                         </div>
                     </div>
-                
+
                     <!-- Bảng dữ liệu chi tiết -->
                     <div class="tables-section">
                         <div class="table-container">
@@ -358,7 +361,7 @@
                                 <tbody id="recent-orders-list"></tbody>
                             </table>
                         </div>
-                    
+
                         <div class="table-container">
                             <h3>Top khách hàng</h3>
                             <table class="table" id="top-customers-table">
@@ -372,7 +375,7 @@
                                 <tbody id="top-customers-list"></tbody>
                             </table>
                         </div>
-                    
+
                         <div class="table-container">
                             <h3>Top sản phẩm bán chạy</h3>
                             <table class="table" id="top-products-table">
@@ -436,7 +439,8 @@
                             </div>
                             <div class="form-group">
                                 <label>Màu sắc (cách nhau bằng dấu phẩy)</label>
-                                <input type="text" id="product-colors" class="form-control" placeholder="Đen, Trắng, Xám">
+                                <input type="text" id="product-colors" class="form-control"
+                                    placeholder="Đen, Trắng, Xám">
                             </div>
                             <div class="form-group">
                                 <label>URL hình ảnh *</label>
@@ -712,49 +716,73 @@
                 <div id="settings-section" class="admin-section">
                     <div class="flex justify-between items-end mb-8 border-b border-outline-variant/30 pb-4">
                         <div>
-                            <h2 class="font-headline text-3xl font-bold text-white tracking-widest uppercase">SYSTEM PROTOCOLS</h2>
+                            <h2 class="font-headline text-3xl font-bold text-white tracking-widest uppercase">SYSTEM
+                                PROTOCOLS</h2>
                             <div class="h-1 w-24 bg-primary-container mt-2"></div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="bg-surface-container border border-outline-variant/20 p-8 relative overflow-hidden group">
+                        <div
+                            class="bg-surface-container border border-outline-variant/20 p-8 relative overflow-hidden group">
                             <div class="absolute top-0 right-0 w-24 h-24 bg-tertiary/10 blur-2xl rounded-full"></div>
-                            <h3 class="font-headline text-xl text-tertiary mb-6 flex items-center gap-2"><i class="fas fa-store"></i> CẤU HÌNH CỬA HÀNG</h3>
+                            <h3 class="font-headline text-xl text-tertiary mb-6 flex items-center gap-2"><i
+                                    class="fas fa-store"></i> CẤU HÌNH CỬA HÀNG</h3>
                             <form id="store-config-form" class="space-y-4">
                                 <div>
-                                    <label class="font-label text-[10px] text-white/50 uppercase tracking-widest">Tên định danh (Tên Shop)</label>
-                                    <input type="text" id="config-store-name" class="w-full bg-surface-container-highest border border-outline-variant/30 text-white p-3 mt-1 focus:border-tertiary outline-none transition-colors" value="TechStore">
+                                    <label class="font-label text-[10px] text-white/50 uppercase tracking-widest">Tên
+                                        định danh (Tên Shop)</label>
+                                    <input type="text" id="config-store-name"
+                                        class="w-full bg-surface-container-highest border border-outline-variant/30 text-white p-3 mt-1 focus:border-tertiary outline-none transition-colors"
+                                        value="TechStore">
                                 </div>
                                 <div>
-                                    <label class="font-label text-[10px] text-white/50 uppercase tracking-widest">Kênh liên lạc (Email)</label>
-                                    <input type="email" id="config-store-email" class="w-full bg-surface-container-highest border border-outline-variant/30 text-white p-3 mt-1 focus:border-tertiary outline-none transition-colors" value="admin@rog.com">
+                                    <label class="font-label text-[10px] text-white/50 uppercase tracking-widest">Kênh
+                                        liên lạc (Email)</label>
+                                    <input type="email" id="config-store-email"
+                                        class="w-full bg-surface-container-highest border border-outline-variant/30 text-white p-3 mt-1 focus:border-tertiary outline-none transition-colors"
+                                        value="admin@rog.com">
                                 </div>
                                 <div>
-                                    <label class="font-label text-[10px] text-white/50 uppercase tracking-widest">Tần số mã hóa (Hotline)</label>
-                                    <input type="text" id="config-store-phone" class="w-full bg-surface-container-highest border border-outline-variant/30 text-white p-3 mt-1 focus:border-tertiary outline-none transition-colors" value="1800 6969">
+                                    <label class="font-label text-[10px] text-white/50 uppercase tracking-widest">Tần số
+                                        mã hóa (Hotline)</label>
+                                    <input type="text" id="config-store-phone"
+                                        class="w-full bg-surface-container-highest border border-outline-variant/30 text-white p-3 mt-1 focus:border-tertiary outline-none transition-colors"
+                                        value="1800 6969">
                                 </div>
-                                <button type="button" onclick="alert('Đã cập nhật giao thức thành công!')" class="mt-6 px-6 py-4 bg-tertiary/10 text-tertiary border border-tertiary/50 hover:bg-tertiary hover:text-black font-bold uppercase text-xs tracking-[0.2rem] transition-all w-full clipped-poly">
+                                <button type="button" onclick="alert('Đã cập nhật giao thức thành công!')"
+                                    class="mt-6 px-6 py-4 bg-tertiary/10 text-tertiary border border-tertiary/50 hover:bg-tertiary hover:text-black font-bold uppercase text-xs tracking-[0.2rem] transition-all w-full clipped-poly">
                                     LƯU GIAO THỨC
                                 </button>
                             </form>
                         </div>
 
-                        <div class="bg-surface-container border border-outline-variant/20 p-8 relative overflow-hidden group">
-                            <div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/10 blur-2xl rounded-full"></div>
-                            <h3 class="font-headline text-xl text-primary-container mb-6 flex items-center gap-2"><i class="fas fa-database"></i> BỘ NHỚ HỆ THỐNG</h3>
+                        <div
+                            class="bg-surface-container border border-outline-variant/20 p-8 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-primary-container/10 blur-2xl rounded-full">
+                            </div>
+                            <h3 class="font-headline text-xl text-primary-container mb-6 flex items-center gap-2"><i
+                                    class="fas fa-database"></i> BỘ NHỚ HỆ THỐNG</h3>
                             <div class="space-y-6">
-                                <div class="p-5 bg-surface-container-highest border border-outline-variant/10 hover:border-white/30 transition-colors">
+                                <div
+                                    class="p-5 bg-surface-container-highest border border-outline-variant/10 hover:border-white/30 transition-colors">
                                     <h4 class="text-white font-bold mb-2">Sao lưu dữ liệu (Backup)</h4>
-                                    <p class="text-white/50 text-xs mb-4 leading-relaxed font-body">Tải toàn bộ bộ nhớ cốt lõi (Sản phẩm, Đơn hàng, Users) về máy dưới dạng file mã hóa JSON để lưu trữ.</p>
-                                    <button id="backup-data-btn" class="px-5 py-3 border border-white/20 text-white hover:bg-white text-xs font-bold uppercase tracking-widest transition-all hover:text-black">
+                                    <p class="text-white/50 text-xs mb-4 leading-relaxed font-body">Tải toàn bộ bộ nhớ
+                                        cốt lõi (Sản phẩm, Đơn hàng, Users) về máy dưới dạng file mã hóa JSON để lưu
+                                        trữ.</p>
+                                    <button id="backup-data-btn"
+                                        class="px-5 py-3 border border-white/20 text-white hover:bg-white text-xs font-bold uppercase tracking-widest transition-all hover:text-black">
                                         <i class="fas fa-download mr-2"></i> KẾT XUẤT DỮ LIỆU
                                     </button>
                                 </div>
-                                <div class="p-5 bg-error-container/10 border border-error/30 hover:border-error transition-colors">
+                                <div
+                                    class="p-5 bg-error-container/10 border border-error/30 hover:border-error transition-colors">
                                     <h4 class="text-error font-bold mb-2">Hủy diệt dữ liệu (Factory Reset)</h4>
-                                    <p class="text-white/50 text-xs mb-4 leading-relaxed font-body">CẢNH BÁO: Thao tác này sẽ xóa sạch dữ liệu cục bộ, khôi phục hệ thống về trạng thái sơ khai ban đầu.</p>
-                                    <button id="wipe-data-btn" class="px-5 py-3 bg-error/20 text-error border border-error/50 hover:bg-error hover:text-black text-xs font-bold uppercase tracking-widest transition-all">
+                                    <p class="text-white/50 text-xs mb-4 leading-relaxed font-body">CẢNH BÁO: Thao tác
+                                        này sẽ xóa sạch dữ liệu cục bộ, khôi phục hệ thống về trạng thái sơ khai ban
+                                        đầu.</p>
+                                    <button id="wipe-data-btn"
+                                        class="px-5 py-3 bg-error/20 text-error border border-error/50 hover:bg-error hover:text-black text-xs font-bold uppercase tracking-widest transition-all">
                                         <i class="fas fa-skull mr-2"></i> KHỞI TẠO LẠI BỘ NHỚ
                                     </button>
                                 </div>
@@ -775,30 +803,39 @@
     </div>
 
     <!-- Thêm Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
                     <div class="footer-brand">
-                        <img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="ROG Logo" class="footer-logo">
+                        <img src="https://iconape.com/wp-content/files/yl/33940/png/asus-rog-1.png" alt="ROG Logo"
+                            class="footer-logo">
                         <span class="footer-brand-name">TechStore</span>
                     </div>
-                    <p class="footer-desc">Cửa hàng chuyên hệ sinh thái TechStore: laptop, màn hình, bàn phím, chuột và âm thanh gaming.</p>
+                    <p class="footer-desc">Cửa hàng chuyên hệ sinh thái TechStore: laptop, màn hình, bàn phím, chuột và
+                        âm thanh gaming.</p>
                     <div class="footer-social">
-                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i><span>Instagram: @techstore</span></a>
-                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i><span>TikTok: @techstore</span></a>
-                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i><span>Facebook: TechStore</span></a>
-                        <a class="social-link" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-comment-dots"></i><span>Zalo: 0901 234 567</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i
+                                class="fa-brands fa-instagram"></i><span>Instagram: @techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i
+                                class="fa-brands fa-tiktok"></i><span>TikTok: @techstore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i
+                                class="fa-brands fa-facebook"></i><span>Facebook: TechStore</span></a>
+                        <a class="social-link" href="#" target="_blank" rel="noopener"><i
+                                class="fa-solid fa-comment-dots"></i><span>Zalo: 0901 234 567</span></a>
                     </div>
                 </div>
                 <div class="footer-col">
                     <h3 class="footer-title">Chi nhánh</h3>
                     <ul class="footer-list">
-                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN TP.HCM: 123 Nguyễn Huệ, Q.1</span></li>
-                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Hà Nội: 45 Trần Duy Hưng, Cầu Giấy</span></li>
-                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Đà Nẵng: 88 Bạch Đằng, Hải Châu</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN TP.HCM: 123 Nguyễn Huệ,
+                                Q.1</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Hà Nội: 45 Trần Duy
+                                Hưng, Cầu Giấy</span></li>
+                        <li class="footer-item"><i class="fa-solid fa-location-dot"></i><span>CN Đà Nẵng: 88 Bạch Đằng,
+                                Hải Châu</span></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -809,8 +846,10 @@
                         <button class="newsletter-btn" type="submit">Đăng ký</button>
                     </form>
                     <ul class="footer-list footer-contact">
-                        <li class="footer-item"><i class="fa-solid fa-phone"></i><a class="footer-link" href="tel:0901234567">Hotline: 0901 234 567</a></li>
-                        <li class="footer-item"><i class="fa-solid fa-envelope"></i><a class="footer-link" href="mailto:techstore@gmail.com">Email: techstore@gmail.com</a></li>
+                        <li class="footer-item"><i class="fa-solid fa-phone"></i><a class="footer-link"
+                                href="tel:0901234567">Hotline: 0901 234 567</a></li>
+                        <li class="footer-item"><i class="fa-solid fa-envelope"></i><a class="footer-link"
+                                href="mailto:techstore@gmail.com">Email: techstore@gmail.com</a></li>
                     </ul>
                 </div>
             </div>
@@ -821,16 +860,16 @@
         </div>
     </footer>
 
-<!-- Scripts -->
-<script src="js/utils.js"></script>
-<script src="js/data.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/charts.js"></script>
-<script src="js/analytics.js"></script>
-<script src="js/search.js"></script>
-<script src="js/stores.js"></script>
-<script src="js/admin.js"></script>
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/stores.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 </body>
-</html>
 
+</html>

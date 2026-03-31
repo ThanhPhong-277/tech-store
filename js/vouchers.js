@@ -70,16 +70,16 @@ function clearSelectedVoucher() {
 function loadUserVouchersToSelect() {
     const select = document.getElementById('voucher-select');
     if (!select) return;
-    
+
     select.innerHTML = '<option value="">-- Chọn mã giảm giá --</option>';
-    
+
     let vouchers = [];
     try {
         vouchers = getAvailableVouchersForCart();
-    } catch(e) {
+    } catch (e) {
         console.error("Lỗi khi lấy dữ liệu Voucher:", e);
     }
-    
+
     if (!vouchers || vouchers.length === 0) {
         const opt = document.createElement('option');
         opt.value = '';
@@ -87,17 +87,17 @@ function loadUserVouchersToSelect() {
         select.appendChild(opt);
         return;
     }
-    
+
     vouchers.forEach(v => {
         const opt = document.createElement('option');
         opt.value = v.id;
-        
+
         // Xử lý an toàn cho định dạng tiền tệ
         const val = v.value || 0;
         const min = v.minOrder || 0;
         const valueText = v.type === 'percent' ? val + '%' : (typeof formatCurrency === 'function' ? formatCurrency(val) : val + 'đ');
         const minText = min > 0 ? `Đơn từ ${typeof formatCurrency === 'function' ? formatCurrency(min) : min + 'đ'}` : 'Mọi đơn hàng';
-        
+
         opt.textContent = `Mã: ${v.code} - Giảm ${valueText} (${minText})`;
         select.appendChild(opt);
     });
@@ -107,7 +107,7 @@ function loadUserVouchersToSelect() {
 function setupVoucherApply() {
     const applyBtn = document.getElementById('apply-voucher');
     if (!applyBtn) return;
-    applyBtn.addEventListener('click', function() {
+    applyBtn.addEventListener('click', function () {
         const select = document.getElementById('voucher-select');
         const voucherId = parseInt(select.value);
         if (!voucherId) {
@@ -133,7 +133,7 @@ function setupVoucherApply() {
 
     const removeBtn = document.getElementById('remove-voucher');
     if (removeBtn) {
-        removeBtn.addEventListener('click', function() {
+        removeBtn.addEventListener('click', function () {
             clearSelectedVoucher();
             document.getElementById('applied-voucher').style.display = 'none';
             updateCartTotal();

@@ -213,13 +213,13 @@ function renderOrderStats(orders) {
 
 function attachOrderEvents() {
     document.querySelectorAll('.cancel-order').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const orderId = parseInt(this.dataset.id);
             cancelOrder(orderId);
         });
     });
     document.querySelectorAll('.view-order-detail').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const orderId = parseInt(this.dataset.id);
             showOrderDetail(orderId);
         });

@@ -42,7 +42,7 @@ function initRevenueChart(data) {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                tooltip: { 
+                tooltip: {
                     callbacks: {
                         label: (context) => `Doanh thu: ${formatCurrency(context.raw)}`
                     }

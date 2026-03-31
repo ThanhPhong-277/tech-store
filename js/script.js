@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateCartCount();
 
     const newYearPopup = document.getElementById('newyear-popup');

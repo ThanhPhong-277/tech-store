@@ -9,7 +9,8 @@ const SIDEBAR_ENABLED_PAGES = new Set([
     'cart.html',
     'my-orders.html',
     'admin.html',
-    'product-detail.html'
+    'product-detail.html',
+    'news-detail.html'
 ]);
 
 function getCurrentPageFileName() {
@@ -178,8 +179,8 @@ function updateUIForUser() {
 function login(usernameOrEmail, password) {
     const users = JSON.parse(localStorage.getItem('users')) || [];
     // Tìm user theo username hoặc email và password
-    const user = users.find(u => 
-        (u.username === usernameOrEmail || u.email === usernameOrEmail) && 
+    const user = users.find(u =>
+        (u.username === usernameOrEmail || u.email === usernameOrEmail) &&
         u.password === password
     );
     if (user) {
@@ -224,7 +225,7 @@ function logout() {
 }
 
 // Khởi tạo khi trang load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     loadCurrentUser();
 });
 

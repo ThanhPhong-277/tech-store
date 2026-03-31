@@ -3,14 +3,14 @@
 function addToCart(productId, quantity, color = null) {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const product = products.find(p => p.id === productId);
-    
+
     if (!product) {
         showToast('Sản phẩm không tồn tại', 'error');
         return;
     }
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
     // TÍNH TỔNG SỐ LƯỢNG SẢN PHẨM NÀY ĐÃ CÓ TRONG GIỎ HÀNG (bao gồm tất cả các màu)
     const totalInCart = cart.reduce((sum, item) => item.id === productId ? sum + item.quantity : sum, 0);
 
@@ -33,7 +33,7 @@ function addToCart(productId, quantity, color = null) {
             color: color
         });
     }
-    
+
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
     showToast('Đã thêm vào giỏ hàng', 'success');
@@ -203,23 +203,23 @@ function loadCart() {
         </div>
     `;
 
-container.innerHTML = html;
+    container.innerHTML = html;
 
     updateCartTotal();
 
     try { attachCartEvents(); } catch (e) { console.error("Lỗi attachCartEvents:", e); }
-    try { 
-        if (typeof initLocationSelects === 'function') initLocationSelects(); 
+    try {
+        if (typeof initLocationSelects === 'function') initLocationSelects();
     } catch (e) { console.error("Lỗi initLocationSelects:", e); }
-    
+
     try { initStoreSelect(); } catch (e) { console.error("Lỗi initStoreSelect:", e); }
-    
+
     try { initVoucherSelect(); } catch (e) { console.error("Lỗi initVoucherSelect:", e); }
 }
 
 function attachCartEvents() {
     document.querySelectorAll('.cart-quantity').forEach(input => {
-        input.addEventListener('change', function() {
+        input.addEventListener('change', function () {
             const index = this.dataset.index;
             const item = JSON.parse(localStorage.getItem('cart'))[index];
             let newQty = parseInt(this.value);
@@ -229,8 +229,8 @@ function attachCartEvents() {
                 // Nếu muốn cảnh báo và đặt lại về 1 (hoặc số lượng trước đó)
                 showToast('Số lượng phải lớn hơn 0', 'error');
                 this.value = item.quantity; // Khôi phục lại số lượng cũ trên giao diện
-                return; 
-                
+                return;
+
                 // HOẶC: Nếu bạn muốn khi nhập <= 0 sẽ tự động xóa sản phẩm, 
                 // thì bỏ comment dòng dưới và comment 3 dòng trên.
                 // updateCartItem(item.id, 0, item.color); 
@@ -242,7 +242,7 @@ function attachCartEvents() {
     });
 
     document.querySelectorAll('.remove-item').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             const index = this.dataset.index;
             const item = JSON.parse(localStorage.getItem('cart'))[index];
             removeFromCart(item.id, item.color);
@@ -251,7 +251,7 @@ function attachCartEvents() {
 
     // Delivery type toggle
     document.querySelectorAll('input[name="delivery-type"]').forEach(radio => {
-        radio.addEventListener('change', function() {
+        radio.addEventListener('change', function () {
             const shippingFields = document.getElementById('shipping-fields');
             const storeFields = document.getElementById('store-fields');
             if (this.value === 'shipping') {
@@ -272,13 +272,13 @@ function updateCartTotal() {
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const deliveryType = document.querySelector('input[name="delivery-type"]:checked')?.value || 'shipping';
     let shipping = 0;
-    
+
     if (deliveryType === 'shipping') {
         shipping = subtotal >= 5000000 ? 0 : 50000;
     }
-    
+
     const discount = calculateDiscount(subtotal);
-    
+
     // SỬA LỖI Ở ĐÂY: Chốt chặn không cho tổng tiền bị âm
     const total = Math.max(0, subtotal + shipping - discount);
 
@@ -486,16 +486,16 @@ function syncSelectedVoucherUI() {
 function initStoreSelect() {
     const storeSelect = document.getElementById('store-select');
     if (!storeSelect) return;
-    
+
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartProductIds = cart.map(item => item.id);
-    
+
     let stores = [];
-    try { stores = JSON.parse(localStorage.getItem('stores')) || []; } catch(e) {}
-    
+    try { stores = JSON.parse(localStorage.getItem('stores')) || []; } catch (e) { }
+
     let availableStores = stores;
     if (stores.length > 0 && stores[0].products) {
-        availableStores = stores.filter(store => 
+        availableStores = stores.filter(store =>
             store.products && store.products.some(pid => cartProductIds.includes(pid))
         );
     }
@@ -508,7 +508,7 @@ function initStoreSelect() {
         storeSelect.appendChild(opt);
     });
 
-    storeSelect.addEventListener('change', function() {
+    storeSelect.addEventListener('change', function () {
         const storeId = this.value;
         const detailDiv = document.getElementById('store-detail');
         if (storeId) {

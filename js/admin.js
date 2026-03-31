@@ -1,11 +1,10 @@
 // js/admin.js
 let quillEditor;
 
-document.addEventListener('DOMContentLoaded', function() {
-    // ... code hiện có ...
+document.addEventListener('DOMContentLoaded', function () {
 
     // Khởi tạo Trình soạn thảo Word cho Tin tức
-    if(document.getElementById('news-editor')) {
+    if (document.getElementById('news-editor')) {
         quillEditor = new Quill('#news-editor', {
             theme: 'snow',
             modules: {
@@ -13,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     [{ 'header': [1, 2, 3, 4, false] }],
                     ['bold', 'italic', 'underline', 'strike'],
                     [{ 'color': [] }, { 'background': [] }],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'align': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'align': [] }],
                     ['link', 'image', 'video'],
                     ['clean']
                 ]
@@ -25,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 let currentAdminSection = 'dashboard';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Kiểm tra quyền admin
     if (!isAdmin()) {
         window.location.href = 'index.html';
@@ -47,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Xử lý chuyển đổi menu
     document.querySelectorAll('.menu-item[data-section]').forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function () {
             const section = this.dataset.section;
             switchSection(section);
         });
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('admin-logout').addEventListener('click', logout);
 
     // Xử lý nút làm mới
-    document.getElementById('refresh-data').addEventListener('click', function() {
+    document.getElementById('refresh-data').addEventListener('click', function () {
         refreshCurrentSection();
     });
 
@@ -91,13 +90,13 @@ function switchSection(section) {
         'settings': 'Cài đặt'
     };
     document.getElementById('page-title').textContent = titles[section] || 'Admin';
-    
+
     currentAdminSection = section;
 }
 
 // Làm mới section hiện tại
 function refreshCurrentSection() {
-    switch(currentAdminSection) {
+    switch (currentAdminSection) {
         case 'dashboard':
             initializeDashboard();
             break;
@@ -128,16 +127,16 @@ function initializeDashboard() {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     const users = JSON.parse(localStorage.getItem('users')) || [];
-    
+
     // Thống kê
     document.getElementById('total-products').textContent = products.length;
-    
+
     const today = new Date().toDateString();
     const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === today);
     document.getElementById('today-orders').textContent = todayOrders.length;
-    
+
     document.getElementById('total-members').textContent = users.filter(u => !u.isAdmin).length;
-    
+
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
     const monthlyRevenue = orders
@@ -150,7 +149,7 @@ function initializeDashboard() {
     document.getElementById('monthly-revenue').textContent = formatCurrency(monthlyRevenue);
 
     // Đơn hàng gần đây
-    const recentOrders = [...orders].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+    const recentOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
     const recentList = document.getElementById('recent-orders-list');
     recentList.innerHTML = recentOrders.length ? recentOrders.map(o => `
         <div class="recent-item">
@@ -180,7 +179,7 @@ function initializeDashboard() {
 function loadProductsSection() {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const tbody = document.getElementById('products-list');
-    
+
     tbody.innerHTML = products.length ? products.map(p => `
         <tr>
             <td>${p.id}</td>
@@ -237,12 +236,12 @@ function loadOrdersSection(forcedStatus = null) {
     }
 
     // 3. Sắp xếp đơn mới nhất lên đầu và in ra bảng
-    const sorted = [...filteredOrders].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
+    const sorted = [...filteredOrders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     tbody.innerHTML = sorted.map(order => {
         const statusClass = getOrderStatusClass(order.status);
         const statusText = getOrderStatusText(order.status);
-        
+
         return `
             <tr>
                 <td>#${order.id}</td>
@@ -274,7 +273,7 @@ function loadOrdersSection(forcedStatus = null) {
         btn.addEventListener('click', () => viewOrderDetail(btn.dataset.id));
     });
     document.querySelectorAll('.status-select').forEach(select => {
-        select.addEventListener('change', function() {
+        select.addEventListener('change', function () {
             updateOrderStatus(this.dataset.id, this.value);
         });
     });
@@ -284,7 +283,7 @@ function loadOrdersSection(forcedStatus = null) {
 function loadVouchersSection() {
     const vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
     const tbody = document.getElementById('vouchers-list');
-    
+
     tbody.innerHTML = vouchers.length ? vouchers.map(v => `
         <tr>
             <td>${v.id}</td>
@@ -310,18 +309,18 @@ function loadMembersSection() {
     const users = JSON.parse(localStorage.getItem('users')) || [];
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     const members = users.filter(u => !u.isAdmin);
-    
+
     const tbody = document.getElementById('members-list');
-    
+
     tbody.innerHTML = members.length ? members.map(m => {
         // Tính số sản phẩm đã mua và tổng chi tiêu
         const userOrders = orders.filter(o => o.userId === m.id && (o.status === 'approved' || o.status === 'completed'));
         const totalProducts = userOrders.reduce((sum, o) => sum + (o.items?.reduce((s, i) => s + i.quantity, 0) || 0), 0);
         const totalSpent = userOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-        
+
         const memberLevel = calculateMemberLevel(totalProducts);
         const levelNumber = Math.floor(totalProducts / 10) + 1;
-        
+
         return `
             <tr>
                 <td>${m.id}</td>
@@ -342,7 +341,7 @@ function loadMembersSection() {
 
     // THÊM ĐOẠN NÀY ĐỂ GẮN SỰ KIỆN CLICK CHO NÚT "XEM"
     document.querySelectorAll('.view-member').forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function (e) {
             e.preventDefault();
             viewMember(this.dataset.id);
         });
@@ -353,10 +352,10 @@ function loadMembersSection() {
 function viewMember(userId) {
     const users = JSON.parse(localStorage.getItem('users')) || [];
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    
+
     const user = users.find(u => String(u.id) === String(userId));
     if (!user) {
-        if(typeof showToast === 'function') showToast('Không tìm thấy thành viên', 'error');
+        if (typeof showToast === 'function') showToast('Không tìm thấy thành viên', 'error');
         return;
     }
 
@@ -379,7 +378,7 @@ function viewMember(userId) {
     // Tận dụng lại order-modal đã có sẵn bên trang HTML để hiển thị
     const modal = document.getElementById('order-modal');
     const content = document.getElementById('order-detail-content');
-    
+
     if (modal && content) {
         content.innerHTML = `
             <h2>Hồ Sơ Thành Viên #${user.id}</h2>
@@ -405,7 +404,7 @@ function viewMember(userId) {
                 </table>
             </div>
         `;
-        
+
         modal.style.display = 'flex';
         modal.querySelector('.close-modal').onclick = () => modal.style.display = 'none';
     } else {
@@ -418,9 +417,9 @@ function viewMember(userId) {
 function loadStoresSection() {
     const stores = JSON.parse(localStorage.getItem('stores')) || [];
     const products = JSON.parse(localStorage.getItem('products')) || [];
-    
+
     const tbody = document.getElementById('stores-list');
-    
+
     tbody.innerHTML = stores.length ? stores.map(s => {
         const productCount = s.products ? s.products.length : 0;
         return `
@@ -459,39 +458,6 @@ function saveNewsPosts(posts) {
     localStorage.setItem(NEWS_POSTS_KEY, JSON.stringify(posts));
 }
 
-function seedNewsPostsIfNeeded() {
-    const existing = getNewsPosts();
-    if (existing.length) return;
-    const now = new Date();
-    const sample = [
-        {
-            id: 1,
-            title: 'ROG Strix Scar 18 (2024) chính thức lên kệ',
-            image: 'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1200',
-            content: 'ROG Strix Scar 18 (2024) đã có mặt tại ROG TechStore với màn hình Nebula HDR, hiệu năng đỉnh cao và hệ thống tản nhiệt tối ưu cho gaming.\n\nTrải nghiệm trực tiếp tại cửa hàng và nhận ưu đãi dành riêng cho thành viên ROG.',
-            createdAt: new Date(now.getTime() - 3 * 86400000).toISOString(),
-            updatedAt: new Date(now.getTime() - 3 * 86400000).toISOString()
-        },
-        {
-            id: 2,
-            title: 'Khai trương chi nhánh ROG Elite Store',
-            image: 'https://images.pexels.com/photos/19012039/pexels-photo-19012039.jpeg?auto=compress&cs=tinysrgb&w=1200',
-            content: 'Chào mừng chi nhánh mới với khu vực trải nghiệm gaming, setup battle-station và hàng loạt phụ kiện ROG.\n\nĐến ngay để nhận voucher khai trương và quà tặng giới hạn.',
-            createdAt: new Date(now.getTime() - 6 * 86400000).toISOString(),
-            updatedAt: new Date(now.getTime() - 6 * 86400000).toISOString()
-        },
-        {
-            id: 3,
-            title: 'ROG Elite Rewards: Tích điểm đổi quà cực chất',
-            image: 'https://images.pexels.com/photos/3587478/pexels-photo-3587478.jpeg?auto=compress&cs=tinysrgb&w=1200',
-            content: 'Tích lũy ROG Points từ mỗi đơn hàng để đổi quà, voucher và phụ kiện giới hạn.\n\nBạn có thể theo dõi điểm và ưu đãi ngay trong trang tin tức.',
-            createdAt: new Date(now.getTime() - 9 * 86400000).toISOString(),
-            updatedAt: new Date(now.getTime() - 9 * 86400000).toISOString()
-        }
-    ];
-    saveNewsPosts(sample);
-}
-
 function openNewsForm(post) {
     const container = document.getElementById('news-form-container');
     const titleEl = document.getElementById('news-form-title');
@@ -515,7 +481,6 @@ function closeNewsForm() {
 }
 
 function loadNewsSection() {
-    seedNewsPostsIfNeeded();
     const posts = getNewsPosts().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     const tbody = document.getElementById('news-list');
     if (!tbody) return;
@@ -570,12 +535,12 @@ document.getElementById('cancel-news-form')?.addEventListener('click', () => {
     closeNewsForm();
 });
 
-document.getElementById('news-form')?.addEventListener('submit', function(e) {
+document.getElementById('news-form')?.addEventListener('submit', function (e) {
     e.preventDefault();
     const idRaw = document.getElementById('news-id')?.value || '';
     const title = (document.getElementById('news-title')?.value || '').trim();
     const image = (document.getElementById('news-image')?.value || '').trim();
-// LẤY NỘI DUNG TỪ EDITOR:
+    // LẤY NỘI DUNG TỪ EDITOR:
     const content = quillEditor ? quillEditor.root.innerHTML : '';
 
     if (!title || !image || !content || content === '<p><br></p>') {
@@ -616,9 +581,9 @@ document.getElementById('cancel-product-form').addEventListener('click', () => {
     document.getElementById('product-form-container').style.display = 'none';
 });
 
-document.getElementById('product-form').addEventListener('submit', function(e) {
+document.getElementById('product-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    
+
     const id = document.getElementById('product-id').value;
     const productData = {
         name: document.getElementById('product-name').value.trim(),
@@ -631,7 +596,7 @@ document.getElementById('product-form').addEventListener('submit', function(e) {
     };
 
     let products = JSON.parse(localStorage.getItem('products')) || [];
-    
+
     if (id) {
         const index = products.findIndex(p => p.id == id);
         if (index >= 0) {
@@ -643,7 +608,7 @@ document.getElementById('product-form').addEventListener('submit', function(e) {
         products.push({ id: newId, ...productData });
         showToast('Thêm sản phẩm thành công', 'success');
     }
-    
+
     localStorage.setItem('products', JSON.stringify(products));
     document.getElementById('product-form-container').style.display = 'none';
     loadProductsSection();
@@ -653,7 +618,7 @@ function editProduct(id) {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const prod = products.find(p => p.id == id);
     if (!prod) return;
-    
+
     document.getElementById('product-id').value = prod.id;
     document.getElementById('product-name').value = prod.name;
     document.getElementById('product-category').value = prod.category;
@@ -662,14 +627,14 @@ function editProduct(id) {
     document.getElementById('product-description').value = prod.description;
     document.getElementById('product-colors').value = prod.colors ? prod.colors.join(', ') : '';
     document.getElementById('product-image').value = prod.image;
-    
+
     document.getElementById('form-title').textContent = 'Sửa sản phẩm';
     document.getElementById('product-form-container').style.display = 'block';
 }
 
 function deleteProduct(id) {
     if (!confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
-    
+
     let products = JSON.parse(localStorage.getItem('products')) || [];
     products = products.filter(p => p.id != id);
     localStorage.setItem('products', JSON.stringify(products));
@@ -699,7 +664,7 @@ function viewOrderDetail(orderId) {
 
     const modal = document.getElementById('order-modal');
     const content = document.getElementById('order-detail-content');
-    
+
     content.innerHTML = `
         <h2>Chi tiết đơn hàng #${order.id}</h2>
         <div class="order-info">
@@ -752,7 +717,7 @@ function viewOrderDetail(orderId) {
         <p><strong>Phương thức thanh toán:</strong> ${getPaymentMethodText(order.paymentMethod)}</p>
         <p><strong>Ngày đặt:</strong> ${new Date(order.createdAt).toLocaleString('vi-VN')}</p>
     `;
-    
+
     modal.style.display = 'flex';
     modal.querySelector('.close-modal').onclick = () => modal.style.display = 'none';
 }
@@ -761,11 +726,11 @@ function updateOrderStatus(orderId, newStatus) {
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     const index = orders.findIndex(o => o.id == orderId);
     if (index === -1) return;
-    
+
     orders[index].status = newStatus;
     orders[index].updatedAt = new Date().toISOString();
     localStorage.setItem('orders', JSON.stringify(orders));
-    
+
     showToast(`Đã cập nhật trạng thái đơn hàng #${orderId}`, 'success');
     loadOrdersSection();
 }
@@ -817,11 +782,11 @@ function loadAnalyticsData() {
     const dateRange = document.getElementById('time-filter').value;
     const startDate = document.getElementById('start-date').value;
     const endDate = document.getElementById('end-date').value;
-    
+
     // Gọi hàm getAnalyticsData từ analytics.js
     const data = getAnalyticsData(dateRange, startDate, endDate);
     currentAnalyticsData = data;
-    
+
     // Cập nhật giao diện
     updateAnalyticsUI(data);
 }
@@ -931,7 +896,7 @@ function updateQuickStats(stats) {
 function updateTrendIndicators(data) {
     // So sánh với kỳ trước để tính trend
     const previousPeriod = getPreviousPeriodData();
-    
+
     const trends = {
         'revenue-change': calculateTrend(data.kpi.totalRevenue, previousPeriod.revenue),
         'orders-change': calculateTrend(data.kpi.totalOrders, previousPeriod.orders),
@@ -1050,7 +1015,7 @@ function downloadCSV(csv, filename) {
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     link.href = url;
     link.setAttribute('download', filename);
     document.body.appendChild(link);
@@ -1066,16 +1031,16 @@ function updateDashboard() {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     const users = JSON.parse(localStorage.getItem('users')) || [];
-    
+
     // Cập nhật stats cards
     document.getElementById('total-products').textContent = products.length;
-    
+
     const today = new Date().toDateString();
     const todayOrders = orders.filter(o => new Date(o.createdAt).toDateString() === today);
     document.getElementById('today-orders').textContent = todayOrders.length;
-    
+
     document.getElementById('total-members').textContent = users.filter(u => !u.isAdmin).length;
-    
+
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
     const monthlyRevenue = orders
@@ -1088,7 +1053,7 @@ function updateDashboard() {
     document.getElementById('monthly-revenue').textContent = formatCurrency(monthlyRevenue);
 
     // Đơn hàng gần đây
-    const recentOrders = [...orders].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+    const recentOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
     const recentList = document.getElementById('recent-orders-list');
     if (recentList) {
         recentList.innerHTML = recentOrders.length ? recentOrders.map(o => {
@@ -1124,7 +1089,7 @@ function updateDashboard() {
 // ==================== INITIALIZATION ====================
 
 // Khởi tạo tất cả
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Kiểm tra quyền admin
     if (!isAdmin()) {
         window.location.href = 'index.html';
@@ -1145,7 +1110,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Xử lý chuyển đổi menu
     document.querySelectorAll('.menu-item[data-section]').forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function () {
             const section = this.dataset.section;
             switchSection(section);
         });
@@ -1155,7 +1120,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('admin-logout').addEventListener('click', logout);
 
     // Xử lý nút làm mới
-    document.getElementById('refresh-data').addEventListener('click', function() {
+    document.getElementById('refresh-data').addEventListener('click', function () {
         refreshCurrentSection();
     });
 
@@ -1180,7 +1145,7 @@ function initAnalyticsEvents() {
     const exportBtn = document.getElementById('export-excel');
 
     if (timeFilter) {
-        timeFilter.addEventListener('change', function() {
+        timeFilter.addEventListener('change', function () {
             if (this.value === 'custom') {
                 customRange.style.display = 'flex';
             } else {
@@ -1193,7 +1158,7 @@ function initAnalyticsEvents() {
     }
 
     if (applyCustom) {
-        applyCustom.addEventListener('click', function() {
+        applyCustom.addEventListener('click', function () {
             if (typeof loadAnalyticsData === 'function') {
                 loadAnalyticsData();
             }
@@ -1231,11 +1196,11 @@ function switchSection(section) {
         'settings': 'Cài đặt'
     };
     document.getElementById('page-title').textContent = titles[section] || 'Admin';
-    
+
     currentAdminSection = section;
 
     // Load dữ liệu cho section tương ứng
-    switch(section) {
+    switch (section) {
         case 'dashboard':
             updateDashboard();
             break;
@@ -1264,7 +1229,7 @@ function switchSection(section) {
 
 // Cập nhật hàm refreshCurrentSection
 function refreshCurrentSection() {
-    switch(currentAdminSection) {
+    switch (currentAdminSection) {
         case 'dashboard':
             updateDashboard();
             showToast('Đã làm mới dashboard', 'success');
@@ -1323,20 +1288,20 @@ function getCategoryName(category) {
 }
 
 // ==================== BỘ LỌC ĐƠN HÀNG ====================
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     const filterBtn = e.target.closest('.filter-btn');
     if (filterBtn) {
         e.preventDefault();
-        
+
         // 1. Xóa class 'active' của tất cả các nút cũ
         const filterBar = filterBtn.closest('.filter-bar');
         if (filterBar) {
             filterBar.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
         }
-        
+
         // 2. Thêm class 'active' (đổi màu) cho nút vừa click
         filterBtn.classList.add('active');
-        
+
         // 3. Gọi hàm load lại bảng với dữ liệu mới
         loadOrdersSection(filterBtn.dataset.status);
     }
@@ -1345,12 +1310,12 @@ document.addEventListener('click', function(e) {
 // ==================== XỬ LÝ QUẢN LÝ VOUCHER ====================
 
 // 1. Gắn sự kiện Click cho các nút của Voucher (Dùng Event Delegation)
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     // Nút Thêm voucher mới
     if (e.target.closest('#add-voucher-btn')) {
         e.preventDefault();
         const container = document.getElementById('voucher-form-container');
-        if(container) {
+        if (container) {
             container.style.display = 'block';
             document.getElementById('voucher-form-title').textContent = 'Thêm voucher mới';
             document.getElementById('voucher-form').reset();
@@ -1380,7 +1345,7 @@ document.addEventListener('click', function(e) {
 });
 
 // 2. Bắt sự kiện Lưu (Submit) Form Voucher
-document.addEventListener('submit', function(e) {
+document.addEventListener('submit', function (e) {
     if (e.target.id === 'voucher-form') {
         e.preventDefault();
         const id = document.getElementById('voucher-id').value;
@@ -1394,7 +1359,7 @@ document.addEventListener('submit', function(e) {
         };
 
         if (!voucherData.code || !voucherData.value) {
-            if(typeof showToast === 'function') showToast('Vui lòng điền đủ thông tin', 'error');
+            if (typeof showToast === 'function') showToast('Vui lòng điền đủ thông tin', 'error');
             return;
         }
 
@@ -1405,24 +1370,24 @@ document.addEventListener('submit', function(e) {
             const index = vouchers.findIndex(v => v.id == id);
             if (index >= 0) {
                 vouchers[index] = { ...vouchers[index], ...voucherData };
-                if(typeof showToast === 'function') showToast('Cập nhật voucher thành công', 'success');
+                if (typeof showToast === 'function') showToast('Cập nhật voucher thành công', 'success');
             }
         } else {
             // Thêm voucher
             if (vouchers.some(v => v.code === voucherData.code)) {
-                if(typeof showToast === 'function') showToast('Mã voucher này đã tồn tại!', 'error');
+                if (typeof showToast === 'function') showToast('Mã voucher này đã tồn tại!', 'error');
                 return;
             }
             const newId = vouchers.length > 0 ? Math.max(...vouchers.map(v => Number(v.id) || 0)) + 1 : 1;
             vouchers.push({ id: newId, ...voucherData });
-            if(typeof showToast === 'function') showToast('Thêm voucher thành công', 'success');
+            if (typeof showToast === 'function') showToast('Thêm voucher thành công', 'success');
         }
 
         localStorage.setItem('vouchers', JSON.stringify(vouchers));
         document.getElementById('voucher-form-container').style.display = 'none';
-        
+
         // Cập nhật lại bảng voucher
-        loadVouchersSection(); 
+        loadVouchersSection();
     }
 });
 
@@ -1442,7 +1407,7 @@ function editVoucher(id) {
 
     const titleEl = document.getElementById('voucher-form-title');
     if (titleEl) titleEl.textContent = 'Sửa voucher';
-    
+
     document.getElementById('voucher-form-container').style.display = 'block';
     window.scrollTo(0, 0); // Cuộn lên đầu trang
 }
@@ -1453,9 +1418,9 @@ function deleteVoucher(id) {
     let vouchers = JSON.parse(localStorage.getItem('vouchers')) || [];
     vouchers = vouchers.filter(v => v.id != id);
     localStorage.setItem('vouchers', JSON.stringify(vouchers));
-    
-    if(typeof showToast === 'function') showToast('Đã xóa voucher', 'success');
-    
+
+    if (typeof showToast === 'function') showToast('Đã xóa voucher', 'success');
+
     // Cập nhật lại bảng voucher
     loadVouchersSection();
 }
@@ -1463,7 +1428,7 @@ function deleteVoucher(id) {
 // ==================== XỬ LÝ QUẢN LÝ CỬA HÀNG ====================
 
 // 1. Gắn sự kiện Click cho các nút của Cửa hàng
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     // Nút Thêm cửa hàng mới
     if (e.target.closest('#add-store-btn')) {
         e.preventDefault();
@@ -1500,7 +1465,7 @@ document.addEventListener('click', function(e) {
 });
 
 // 2. Bắt sự kiện Lưu (Submit) Form Cửa hàng
-document.addEventListener('submit', function(e) {
+document.addEventListener('submit', function (e) {
     if (e.target.id === 'store-form') {
         e.preventDefault();
         const id = document.getElementById('store-id').value;
@@ -1511,7 +1476,7 @@ document.addEventListener('submit', function(e) {
         };
 
         if (!storeData.name || !storeData.address || !storeData.phone) {
-            if(typeof showToast === 'function') showToast('Vui lòng điền đủ thông tin', 'error');
+            if (typeof showToast === 'function') showToast('Vui lòng điền đủ thông tin', 'error');
             return;
         }
 
@@ -1522,21 +1487,21 @@ document.addEventListener('submit', function(e) {
             const index = stores.findIndex(s => s.id == id);
             if (index >= 0) {
                 stores[index] = { ...stores[index], ...storeData };
-                if(typeof showToast === 'function') showToast('Cập nhật cửa hàng thành công', 'success');
+                if (typeof showToast === 'function') showToast('Cập nhật cửa hàng thành công', 'success');
             }
         } else {
             // Thêm cửa hàng
             const newId = stores.length > 0 ? Math.max(...stores.map(s => Number(s.id) || 0)) + 1 : 1;
             storeData.products = []; // Cửa hàng mới mặc định chưa có sản phẩm nào
             stores.push({ id: newId, ...storeData });
-            if(typeof showToast === 'function') showToast('Thêm cửa hàng thành công', 'success');
+            if (typeof showToast === 'function') showToast('Thêm cửa hàng thành công', 'success');
         }
 
         localStorage.setItem('stores', JSON.stringify(stores));
         document.getElementById('store-form-container').style.display = 'none';
-        
+
         // Cập nhật lại bảng danh sách cửa hàng
-        loadStoresSection(); 
+        loadStoresSection();
     }
 });
 
@@ -1553,7 +1518,7 @@ function editStore(id) {
 
     const titleEl = document.getElementById('store-form-title');
     if (titleEl) titleEl.textContent = 'Sửa cửa hàng';
-    
+
     document.getElementById('store-form-container').style.display = 'block';
     window.scrollTo(0, 0); // Cuộn lên đầu trang
 }
@@ -1564,55 +1529,55 @@ function deleteStore(id) {
     let stores = JSON.parse(localStorage.getItem('stores')) || [];
     stores = stores.filter(s => s.id != id);
     localStorage.setItem('stores', JSON.stringify(stores));
-    
-    if(typeof showToast === 'function') showToast('Đã xóa cửa hàng', 'success');
-    
+
+    if (typeof showToast === 'function') showToast('Đã xóa cửa hàng', 'success');
+
     // Cập nhật lại bảng
     loadStoresSection();
 }
 
 // ==================== XỬ LÝ CÀI ĐẶT & HỆ THỐNG ====================
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // 1. Chức năng Backup Dữ liệu
     const backupBtn = document.getElementById('backup-data-btn');
     if (backupBtn) {
-        backupBtn.addEventListener('click', function() {
+        backupBtn.addEventListener('click', function () {
             // Lấy toàn bộ dữ liệu trong LocalStorage
             const allData = {};
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 allData[key] = localStorage.getItem(key);
             }
-            
+
             // Chuyển thành chuỗi JSON
             const dataStr = JSON.stringify(allData, null, 2);
-            
+
             // Tạo file và kích hoạt tải xuống
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `ROG_TechStore_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `ROG_TechStore_Backup_${new Date().toISOString().slice(0, 10)}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
-            if(typeof showToast === 'function') showToast('Đã kết xuất dữ liệu hệ thống!', 'success');
+
+            if (typeof showToast === 'function') showToast('Đã kết xuất dữ liệu hệ thống!', 'success');
         });
     }
 
     // 2. Chức năng Xóa sạch dữ liệu (Wipe Data)
     const wipeBtn = document.getElementById('wipe-data-btn');
     if (wipeBtn) {
-        wipeBtn.addEventListener('click', function() {
+        wipeBtn.addEventListener('click', function () {
             const confirmWipe = confirm("CẢNH BÁO TỐI THƯỢNG!\n\nBạn có chắc chắn muốn xóa toàn bộ dữ liệu Đơn hàng, Sản phẩm, Users... không?\nHành động này không thể hoàn tác!");
-            
+
             if (confirmWipe) {
                 // Xóa sạch LocalStorage
                 localStorage.clear();
-                
+
                 // Nạp lại tài khoản Admin mặc định để không bị khóa tài khoản
                 const defaultAdmin = [{
                     id: 1,
@@ -1623,7 +1588,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     createdAt: new Date().toISOString()
                 }];
                 localStorage.setItem('users', JSON.stringify(defaultAdmin));
-                
+
                 alert("ĐÃ HỦY DIỆT DỮ LIỆU. Hệ thống sẽ khởi động lại.");
                 // Đăng xuất và tải lại trang
                 localStorage.removeItem('currentUser');

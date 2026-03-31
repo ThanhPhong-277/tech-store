@@ -3,7 +3,7 @@
 // Lấy dữ liệu từ localStorage
 function getAnalyticsData(dateRange = 'week', startDate = null, endDate = null) {
     console.log('getAnalyticsData called with:', { dateRange, startDate, endDate });
-    
+
     const users = JSON.parse(localStorage.getItem('users')) || [];
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
@@ -76,26 +76,26 @@ function filterOrdersByDate(orders, dateRange, startDate, endDate) {
     let start = new Date();
     let end = new Date();
 
-    switch(dateRange) {
+    switch (dateRange) {
         case 'today':
-            start.setHours(0,0,0,0);
-            end.setHours(23,59,59,999);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
             break;
         case 'yesterday':
             start.setDate(start.getDate() - 1);
-            start.setHours(0,0,0,0);
+            start.setHours(0, 0, 0, 0);
             end.setDate(end.getDate() - 1);
-            end.setHours(23,59,59,999);
+            end.setHours(23, 59, 59, 999);
             break;
         case 'week':
             start.setDate(start.getDate() - 7);
-            start.setHours(0,0,0,0);
-            end.setHours(23,59,59,999);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
             break;
         case 'month':
             start.setMonth(start.getMonth() - 1);
-            start.setHours(0,0,0,0);
-            end.setHours(23,59,59,999);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
             break;
         case 'month-current':
             start = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -113,7 +113,7 @@ function filterOrdersByDate(orders, dateRange, startDate, endDate) {
             if (startDate && endDate) {
                 start = new Date(startDate);
                 end = new Date(endDate);
-                end.setHours(23,59,59,999);
+                end.setHours(23, 59, 59, 999);
             }
             break;
         default:
@@ -137,13 +137,13 @@ function calculateKPI(users, filteredOrders, filteredOrderItems, allOrders) {
     const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
     const totalOrders = filteredOrders.length;
     const totalCustomers = users.filter(u => !u.isAdmin).length;
-    
+
     // Khách hàng mới trong kỳ
     let startDate = new Date();
     if (filteredOrders.length > 0) {
         startDate = new Date(Math.min(...filteredOrders.map(o => new Date(o.createdAt))));
     }
-    
+
     const newCustomers = users.filter(u => {
         if (u.isAdmin) return false;
         const created = new Date(u.createdAt || u.registeredAt || Date.now());
@@ -185,7 +185,7 @@ function calculateKPI(users, filteredOrders, filteredOrderItems, allOrders) {
 function getRevenueByDate(orders) {
     const revenueMap = new Map();
     const sortedOrders = [...orders].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    
+
     sortedOrders.forEach(order => {
         const date = new Date(order.createdAt).toLocaleDateString('vi-VN');
         revenueMap.set(date, (revenueMap.get(date) || 0) + (order.total || 0));
@@ -201,7 +201,7 @@ function getRevenueByDate(orders) {
 function getOrdersByDate(orders) {
     const ordersMap = new Map();
     const sortedOrders = [...orders].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    
+
     sortedOrders.forEach(order => {
         const date = new Date(order.createdAt).toLocaleDateString('vi-VN');
         ordersMap.set(date, (ordersMap.get(date) || 0) + 1);
@@ -271,7 +271,7 @@ function getNewVsReturning(users, filteredOrders, allOrders) {
 
     // Khách mua trong kỳ lọc
     const customersInPeriod = new Set(filteredOrders.map(o => o.userId).filter(id => id));
-    
+
     let newCount = 0;
     let returningCount = 0;
 
@@ -294,7 +294,7 @@ function getNewVsReturning(users, filteredOrders, allOrders) {
 // Lấy đơn hàng gần đây
 function getRecentOrders(orders, users, limit = 5) {
     const sorted = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, limit);
-    
+
     return sorted.map(order => {
         const user = users.find(u => u.id === order.userId);
         return {
@@ -372,7 +372,7 @@ function getQuickStats(orders, products) {
     const completed = orders.filter(o => o.status === 'completed' || o.status === 'approved').length;
     const pending = orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
     const cancelled = orders.filter(o => o.status === 'cancelled' || o.status === 'rejected').length;
-    
+
     const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
     const lowStock = products.filter(p => p.stock > 0 && p.stock < 5).length;
 
