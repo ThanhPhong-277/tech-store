@@ -38,8 +38,8 @@
     </header>
 
     <main class="container">
-        <h1 class="page-title">Trang tin tức</h1>
-        <p class="page-subtitle">Bản tin ra mắt sản phẩm mới, sự kiện, chi nhánh cửa hàng và chương trình đổi thưởng dành cho cộng đồng ASUS ROG.</p>
+        <h1 class="page-title">Bài viết</h1>
+        <p class="page-subtitle">Tin tức về phần cứng chơi game mới nhất, cùng với các mẹo và hướng dẫn để tối ưu hóa thiết lập PC hoặc máy tính xách tay chơi game của bạn.</p>
 
         <section class="news-hero scroll-reveal">
             <div class="news-slider" id="news-slider"></div>
@@ -113,17 +113,19 @@
     <script src="js/cart.js"></script>
     <script src="js/vouchers.js"></script>
     <script src="js/search.js"></script>
+    <script src="js/news-data.js"></script>
+
     <script>
         const NEWS_POSTS_KEY = 'news_posts';
 
-        function getNewsPosts() {
-            try {
-                const parsed = JSON.parse(localStorage.getItem(NEWS_POSTS_KEY) || '[]');
-                return Array.isArray(parsed) ? parsed : [];
-            } catch (e) {
-                return [];
-            }
-        }
+        // function getNewsPosts() {
+        //     try {
+        //         const parsed = JSON.parse(localStorage.getItem(NEWS_POSTS_KEY) || '[]');
+        //         return Array.isArray(parsed) ? parsed : [];
+        //     } catch (e) {
+        //         return [];
+        //     }
+        // }
 
         function escapeHtml(str) {
             const div = document.createElement('div');
@@ -199,30 +201,27 @@ function stripHtml(html) {
             start();
         }
 
-        function renderNewsList(posts) {
-            const root = document.getElementById('news-posts');
-            if (!root) return;
-            if (!posts.length) {
-                root.innerHTML = '<div class="orders-empty"><div class="orders-empty-icon"><i class="fa-solid fa-newspaper"></i></div><h2>Chưa có bài viết</h2><p>Vui lòng đăng bài trong trang quản trị để hiển thị tại đây.</p></div>';
-                return;
-            }
-            root.innerHTML = posts.map(p => `
-                <article class="news-card">
-                    <div class="news-card-image">
-                        <img src="${p.image}" alt="${escapeHtml(p.title)}">
-                    </div>
-                    <div class="news-card-content">
-                        <div class="news-card-meta">
-                            <span class="news-card-tag">ROG</span>
-                            <span>${p.createdAt ? new Date(p.createdAt).toLocaleDateString('vi-VN') : ''}</span>
-                        </div>
-                        <h2 class="news-card-title">${escapeHtml(p.title)}</h2>
-                        <p class="news-card-excerpt">${escapeHtml(toExcerpt(p.content, 180))}</p>
-                        <a href="news.html?post=${encodeURIComponent(p.id)}" class="news-card-readmore" data-id="${p.id}">Đọc thêm <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            `).join('');
-        }
+function renderNewsList(posts) {
+    const root = document.getElementById('news-posts');
+    if (!root) return;
+    if (!posts.length) {
+        root.innerHTML = '<p>Chưa có bài viết.</p>';
+        return;
+    }
+    root.innerHTML = posts.map(p => `
+        <article class="news-card">
+            <div class="news-card-image">
+                <img src="${p.image}" alt="${p.title}">
+            </div>
+            <div class="news-card-content">
+                <h2 class="news-card-title">${p.title}</h2>
+                <a href="news-detail.html?id=${p.id}" class="news-card-readmore">
+                    Đọc thêm <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </article>
+    `).join('');
+}
 
         function openPostModal(post) {
             const overlay = document.getElementById('post-modal-overlay');
@@ -261,39 +260,18 @@ function stripHtml(html) {
             }, 200);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
+            // Cập nhật giỏ hàng
             updateCartCount();
-            const posts = getNewsPosts().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            // Lấy dữ liệu bài viết
+            const posts = getAllNews();
+            
+            // Render slider và danh sách tin tức
             renderNewsSlider(posts);
             renderNewsList(posts);
 
-            document.getElementById('post-modal-overlay')?.addEventListener('click', closePostModal);
-            document.getElementById('post-modal-close')?.addEventListener('click', closePostModal);
-
-            document.getElementById('news-posts')?.addEventListener('click', (e) => {
-                const link = e.target.closest('.news-card-readmore');
-                if (!link) return;
-                e.preventDefault();
-                const id = String(link.dataset.id || '');
-                const post = posts.find(p => String(p.id) === id);
-                if (!post) return;
-                const url = new URL(window.location.href);
-                url.searchParams.set('post', id);
-                window.history.pushState({}, '', url.toString());
-                openPostModal(post);
-            });
-
-            const params = new URLSearchParams(window.location.search);
-            const openId = params.get('post');
-            if (openId) {
-                const post = posts.find(p => String(p.id) === String(openId));
-                if (post) openPostModal(post);
-            }
-
-            window.addEventListener('popstate', () => {
-                const p = new URLSearchParams(window.location.search).get('post');
-                if (!p) closePostModal();
-            });
+            // ĐÃ XÓA TOÀN BỘ SỰ KIỆN CLICK CHẶN NÚT "ĐỌC THÊM" Ở ĐÂY
         });
     </script>
 </body>

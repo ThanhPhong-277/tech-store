@@ -46,7 +46,7 @@ const sampleProducts = [
     { id: 39, name: 'ROG Swift PG35VQ', category: 'monitor', price: 62000000, stock: 1, image: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSkcTRwu3vYrT-di5fXXD9hR8aEfdVJOJ4D0CQcAnr_Ha1YhJKLXmB36R4ulkTS', description: 'Màn hình cong HDR 200Hz cực khủng.', colors: ['Black'] },
     { id: 40, name: 'ROG Strix XG438Q', category: 'monitor', price: 32000000, stock: 4, image: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS4xTm2c4zhj8vRoTpT3HYESKzSGRgp243LCfQFPtV1z7unqXB_FPcBTvQL7wbE', description: 'Màn hình 43 inch 4K 120Hz siêu lớn.', colors: ['Black'] },
 
-// === BÀN PHÍM GAMING (20) ===
+    // === BÀN PHÍM GAMING (20) ===
     { id: 41, name: 'ROG Azoth', category: 'keyboard', price: 7990000, stock: 10, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6RMneH37P7nSLzAauCuLyjth1ScrknDwMRSpm7A9a4tQkB0KZZBAMoz8sibRx', description: 'Bàn phím cơ Custom cao cấp có màn hình OLED.', colors: ['Grey'] },
     { id: 42, name: 'ROG Strix Scope II 96 Wireless', category: 'keyboard', price: 4490000, stock: 15, image: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQF7NaITdCGphpdypVBPkEzgQ4RmQz-ThNbLAM3K3hdNEm_eP-RlJfKbO_-b9aU', description: 'Bàn phím 96% đầy đủ tính năng, switch ROG NX Snow.', colors: ['Black'] },
     { id: 43, name: 'ROG Strix Scope II', category: 'keyboard', price: 3290000, stock: 20, image: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSJn66qJZgcX6qs40fLgs0uqVO6jNK4gAgjd4zXsPTjWovgbH4x8eGY7QcQ8YqL', description: 'Bàn phím full-size hiệu năng cao.', colors: ['Black'] },
@@ -122,36 +122,10 @@ const sampleVouchers = [
 // Dữ liệu người dùng mẫu
 const sampleUsers = [
     { id: 1, username: 'admin', email: 'admin@techstore.com', password: 'admin123', isAdmin: true },
-    { id: 2, username: 'user1', email: 'user1@example.com', password: 'user123', isAdmin: false },
-    { id: 3, username: 'user2', email: 'user2@example.com', password: 'user123', isAdmin: false },
-    { id: 2, username: 'user3', email: 'user3@example.com', password: 'user123', isAdmin: false }
-];
-
-const sampleNewsPosts = [
-    {
-        id: 1,
-        title: 'ROG Strix Scar 18 (2024) chính thức lên kệ',
-        image: 'https://gamesmea.com/wp-content/uploads/2023/02/2023-ROG-Strix-SCAR-1618_G634JY_G634JZ_G834JY_G834JZ_Scenario-Photo_01.jpg',
-        content: 'ROG Strix Scar 18 (2024) đã có mặt tại ROG TechStore với màn hình Nebula HDR, hiệu năng đỉnh cao và hệ thống tản nhiệt tối ưu cho gaming.\n\nTrải nghiệm trực tiếp tại cửa hàng và nhận ưu đãi dành riêng cho thành viên ROG.',
-        createdAt: '2026-03-18T09:00:00.000Z',
-        updatedAt: '2026-03-18T09:00:00.000Z'
-    },
-    {
-        id: 2,
-        title: 'Khai trương chi nhánh ROG Elite Store',
-        image: 'https://omgluie.com/wp-content/uploads/2022/06/AMD-Launch-1280-x-800-V2-1.jpg',
-        content: 'Chào mừng chi nhánh mới với khu vực trải nghiệm gaming, setup battle-station và hàng loạt phụ kiện ROG.\n\nĐến ngay để nhận voucher khai trương và quà tặng giới hạn.',
-        createdAt: '2026-03-15T09:00:00.000Z',
-        updatedAt: '2026-03-15T09:00:00.000Z'
-    },
-    {
-        id: 3,
-        title: 'ROG Elite Rewards: Tích điểm đổi quà cực chất',
-        image: 'https://dlcdnwebimgs.asus.com/gain/0F25FFB8-D9A4-4014-9233-9FFAD450BFE5',
-        content: 'Tích lũy ROG Points từ mỗi đơn hàng để đổi quà, voucher và phụ kiện giới hạn.\n\nBạn có thể theo dõi điểm và ưu đãi ngay trong trang tin tức.',
-        createdAt: '2026-03-12T09:00:00.000Z',
-        updatedAt: '2026-03-12T09:00:00.000Z'
-    }
+    { id: 2, username: 'admin1', email: 'admin1@techstore.com', password: 'admin123', isAdmin: true },
+    { id: 3, username: 'user1', email: 'user1@example.com', password: 'user123', isAdmin: false },
+    { id: 4, username: 'user2', email: 'user2@example.com', password: 'user123', isAdmin: false },
+    { id: 5, username: 'user3', email: 'user3@example.com', password: 'user123', isAdmin: false }
 ];
 
 // Dữ liệu tỉnh/thành phố (sẽ load từ provinces.js)
@@ -160,7 +134,7 @@ let provinces = [];
 // Hàm khởi tạo dữ liệu trong localStorage
 function initializeData() {
     // Phiên bản dữ liệu (để ép cập nhật khi có thay đổi lớn)
-    const DATA_VERSION = "3.0"; 
+    const DATA_VERSION = "3.0";
     const currentVersion = localStorage.getItem('data_version');
 
     // Nếu chưa có dữ liệu hoặc phiên bản cũ, nạp 100 sản phẩm độc nhất
@@ -190,16 +164,6 @@ function initializeData() {
     });
     if (!existingVouchersRaw || !Array.isArray(existingVouchers) || existingVouchers.length === 0 || !hasValidActiveVoucher) {
         localStorage.setItem('vouchers', JSON.stringify(sampleVouchers));
-    }
-    const existingNewsRaw = localStorage.getItem('news_posts');
-    let existingNews = [];
-    try {
-        existingNews = JSON.parse(existingNewsRaw || '[]') || [];
-    } catch (e) {
-        existingNews = [];
-    }
-    if (!existingNewsRaw || !Array.isArray(existingNews) || existingNews.length === 0) {
-        localStorage.setItem('news_posts', JSON.stringify(sampleNewsPosts));
     }
     // Người dùng
     if (!localStorage.getItem('users')) {
@@ -237,23 +201,23 @@ if (!localStorage.getItem('stores') && typeof sampleStores !== 'undefined') {
 // Tạo dữ liệu mẫu cho analytics nếu chưa có
 function generateSampleAnalyticsData() {
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    
+
     if (orders.length === 0) {
         const sampleOrders = [];
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const products = JSON.parse(localStorage.getItem('products')) || [];
-        
+
         const today = new Date();
         for (let i = 0; i < 30; i++) {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
             const ordersCount = Math.floor(Math.random() * 5) + 1;
-            
+
             for (let j = 0; j < ordersCount; j++) {
                 const user = users[Math.floor(Math.random() * users.length)];
                 const orderProducts = [];
                 let total = 0;
-                
+
                 const productCount = Math.floor(Math.random() * 3) + 1;
                 for (let k = 0; k < productCount; k++) {
                     const product = products[Math.floor(Math.random() * products.length)];
@@ -269,10 +233,10 @@ function generateSampleAnalyticsData() {
                         total += product.price * quantity;
                     }
                 }
-                
+
                 const statuses = ['pending', 'processing', 'approved', 'completed', 'cancelled'];
                 const status = statuses[Math.floor(Math.random() * statuses.length)];
-                
+
                 sampleOrders.push({
                     id: 1000 + sampleOrders.length + 1,
                     userId: user?.id || 1,

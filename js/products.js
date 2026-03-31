@@ -230,84 +230,70 @@ function openQuickView(product) {
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     let totalInCart = cart.reduce((sum, item) => item.id === product.id ? sum + item.quantity : sum, 0);
-
     const isOutOfStock = product.stock <= 0;
 
     body.innerHTML = `
         <div style="display: grid; grid-template-columns: 1fr 1fr; background: white; border-radius: 8px;">
             <div style="padding: 20px; border-right: 1px solid #eee;">
-                <img src="${product.image}" alt="${product.name}" style="width: 100%; height: auto; object-fit: contain; border-radius: 8px;">
+                <img src="${product.image}" alt="${product.name}" style="width: 100%; height: auto; object-fit: contain;">
             </div>
             <div style="padding: 30px; color: #333;">
-                <span style="color: #666; font-size: 0.85rem; text-transform: uppercase; font-weight: bold;">${getCategoryName(product.category)}</span>
-                <h2 style="font-size: 1.8rem; margin: 10px 0; color: #111;">${product.name}</h2>
+                <span style="color: #666; font-size: 0.85rem; text-transform: uppercase;">${getCategoryName(product.category)}</span>
+                <h2 style="font-size: 1.8rem; margin: 10px 0;">${product.name}</h2>
                 <div style="font-size: 1.6rem; color: #e02424; font-weight: 900; margin-bottom: 15px;">${formatCurrency(product.price)}</div>
                 
-                <div style="margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 20px; background: ${isOutOfStock ? '#fef2f2' : '#f0fdf4'}; border: 1px solid ${isOutOfStock ? '#fecaca' : '#bbf7d0'}; color: ${isOutOfStock ? '#dc2626' : '#166534'};">
-                    <i class="fas fa-${isOutOfStock ? 'times-circle' : 'check-circle'}"></i> 
-                    ${isOutOfStock ? 'Hết hàng' : `Còn ${product.stock} sản phẩm trong kho`}
-                </div>
-                
-                <div style="color: #555; line-height: 1.6; margin-bottom: 25px; max-height: 180px; overflow-y: auto; font-size: 0.95rem;">
+                <div style="color: #555; line-height: 1.6; margin-bottom: 20px; max-height: 150px; overflow-y: auto;">
                     ${product.description}
                 </div>
                 
                 ${!isOutOfStock ? `
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-                    <strong style="color: #333;">Số lượng:</strong>
-                    <div style="display: flex; align-items: center; border: 1px solid #ccc; border-radius: 6px; overflow: hidden;">
-                        <button id="qv-minus" style="width: 40px; height: 40px; background: #f8f9fa; border: none; cursor: pointer; border-right: 1px solid #ccc; font-size: 1.2rem;">-</button>
-                        <input type="number" id="qv-qty" value="1" min="1" max="${product.stock}" style="width: 60px; height: 40px; text-align: center; border: none; outline: none; font-weight: bold; color: black; background: white;" readonly>
-                        <button id="qv-plus" style="width: 40px; height: 40px; background: #f8f9fa; border: none; cursor: pointer; border-left: 1px solid #ccc; font-size: 1.2rem;">+</button>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <strong>Số lượng:</strong>
+                    <div style="display: flex; align-items: center; border: 1px solid #ccc; border-radius: 6px;">
+                        <button id="qv-minus" style="width: 35px; height: 35px; border: none; cursor: pointer;">-</button>
+                        <input type="number" id="qv-qty" value="1" min="1" style="width: 50px; text-align: center; border: none;" readonly>
+                        <button id="qv-plus" style="width: 35px; height: 35px; border: none; cursor: pointer;">+</button>
                     </div>
                 </div>
-                <button id="qv-add-cart" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1.1rem; border-radius: 8px; text-transform: uppercase; font-weight: bold;">
-                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                <button id="qv-buy-now" class="btn btn-primary" style="width: 100%; padding: 12px; margin-bottom: 10px; background: #ffcc00; color: black; border: none;">
+                    Mua ngay
                 </button>
-                ` : `
-                <button class="btn btn-danger" disabled style="width: 100%; padding: 14px; font-size: 1.1rem; border-radius: 8px; text-transform: uppercase; font-weight: bold; opacity: 0.6;">
-                    Hết hàng
+                <button id="qv-add-cart" class="btn btn-outline" style="width: 100%; padding: 12px;">
+                    Thêm vào giỏ hàng
                 </button>
-                `}
+                ` : `<button class="btn btn-danger" disabled style="width: 100%;">Hết hàng</button>`}
             </div>
         </div>
     `;
 
     modal.style.display = 'flex';
 
-    // Đóng modal
-    document.getElementById('quick-view-close').onclick = () => modal.style.display = 'none';
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
-
-    // Chức năng tăng giảm & Thêm vào giỏ hàng
     if (!isOutOfStock) {
         const qtyInput = document.getElementById('qv-qty');
-        
-        document.getElementById('qv-minus').onclick = () => {
-            let v = parseInt(qtyInput.value);
-            if (v > 1) qtyInput.value = v - 1;
-        };
-        
+        document.getElementById('qv-minus').onclick = () => { if(qtyInput.value > 1) qtyInput.value--; };
         document.getElementById('qv-plus').onclick = () => {
-            let v = parseInt(qtyInput.value);
-            // Kiểm tra số lượng thêm + số lượng đã có trong giỏ
-            if (v < product.stock - totalInCart) {
-                qtyInput.value = v + 1;
-            } else {
-                showToast(`Chỉ có thể thêm tối đa ${product.stock - totalInCart} sản phẩm (bạn đã có ${totalInCart} cái trong giỏ)`, 'warning');
+            if (parseInt(qtyInput.value) < product.stock - totalInCart) qtyInput.value++;
+            else showToast("Vượt quá số lượng trong kho", "warning");
+        };
+
+        // Xử lý nút Mua ngay (Thêm và chuyển trang)
+        document.getElementById('qv-buy-now').onclick = () => {
+            const qty = parseInt(qtyInput.value);
+            if (typeof addToCart === 'function') {
+                addToCart(product.id, qty);
+                window.location.href = 'cart.html'; // Chuyển tới giỏ hàng
             }
         };
-        
+
+        // Xử lý nút Thêm vào giỏ (Chỉ thêm, không chuyển trang)
         document.getElementById('qv-add-cart').onclick = () => {
-            let v = parseInt(qtyInput.value);
-            if (totalInCart + v > product.stock) {
-                showToast(`Kho chỉ còn ${product.stock} cái. Bạn đã có ${totalInCart} cái trong giỏ!`, 'error');
-                return;
-            }
+            const qty = parseInt(qtyInput.value);
             if (typeof addToCart === 'function') {
-                addToCart(product.id, v);
-                modal.style.display = 'none';
+                addToCart(product.id, qty);
+                showToast("Đã thêm vào giỏ hàng", "success");
+                modal.style.display = 'none'; // Đóng popup
             }
         };
     }
+    document.getElementById('quick-view-close').onclick = () => modal.style.display = 'none';
 }
