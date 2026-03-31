@@ -6,11 +6,11 @@ const SIDEBAR_ENABLED_PAGES = new Set([
     'index.html',
     'products.html',
     'news.html',
+    'news-detail.html',
     'cart.html',
     'my-orders.html',
     'admin.html',
-    'product-detail.html',
-    'news-detail.html'
+    'product-detail.html'
 ]);
 
 function getCurrentPageFileName() {

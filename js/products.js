@@ -91,29 +91,6 @@ function renderProducts(productsArray) {
     });
 }
 
-// function filterProducts(category) {
-//     const products = JSON.parse(localStorage.getItem('products')) || [];
-//     const filtered = category === 'all' ? products : products.filter(p => p.category === category);
-//     renderProducts(filtered);
-// }
-
-// // Gắn sự kiện cho các nút lọc
-// document.addEventListener('DOMContentLoaded', function() {
-//     loadAllProducts(); // Tải tất cả sản phẩm khi trang load
-
-//     const filterBtns = document.querySelectorAll('.filter-btn');
-//     filterBtns.forEach(btn => {
-//         btn.addEventListener('click', function() {
-//             filterBtns.forEach(b => b.classList.remove('active'));
-//             this.classList.add('active');
-//             const cat = this.dataset.category;
-//             filterProducts(cat);
-//         });
-//     });
-// });
-
-// ... (Các phần hàm ở trên giữ nguyên: createProductCard, loadAllProducts, renderProducts, applyFilters)
-
 // Biến toàn cục để lưu trạng thái lọc hiện tại
 let currentCategory = 'all';
 let currentPriceMin = 0;

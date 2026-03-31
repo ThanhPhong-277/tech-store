@@ -442,20 +442,16 @@ function loadStoresSection() {
     }).join('') : '<tr><td colspan="6" style="text-align: center;">Chưa có cửa hàng</td></tr>';
 }
 
-const NEWS_POSTS_KEY = 'news_posts';
-
 function getNewsPosts() {
-    const raw = localStorage.getItem(NEWS_POSTS_KEY);
     try {
-        const parsed = JSON.parse(raw || '[]');
-        return Array.isArray(parsed) ? parsed : [];
+        return JSON.parse(localStorage.getItem('news_posts') || '[]');
     } catch (e) {
         return [];
     }
 }
 
 function saveNewsPosts(posts) {
-    localStorage.setItem(NEWS_POSTS_KEY, JSON.stringify(posts));
+    localStorage.setItem('news_posts', JSON.stringify(posts));
 }
 
 function openNewsForm(post) {
