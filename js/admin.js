@@ -1,4 +1,27 @@
 // js/admin.js
+let quillEditor;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ... code hiện có ...
+
+    // Khởi tạo Trình soạn thảo Word cho Tin tức
+    if(document.getElementById('news-editor')) {
+        quillEditor = new Quill('#news-editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'align': [] }],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ]
+            },
+            placeholder: 'Soạn thảo hoặc dán nội dung từ mạng (kèm hình ảnh) vào đây...'
+        });
+    }
+});
 
 let currentAdminSection = 'dashboard';
 
@@ -478,7 +501,9 @@ function openNewsForm(post) {
     document.getElementById('news-id').value = post ? String(post.id) : '';
     document.getElementById('news-title').value = post ? (post.title || '') : '';
     document.getElementById('news-image').value = post ? (post.image || '') : '';
-    document.getElementById('news-content').value = post ? (post.content || '') : '';
+    if (quillEditor) {
+        quillEditor.root.innerHTML = post ? (post.content || '') : '';
+    }
 
     titleEl.textContent = post ? 'Sửa bài viết' : 'Thêm bài viết mới';
     container.style.display = 'block';
@@ -550,8 +575,10 @@ document.getElementById('news-form')?.addEventListener('submit', function(e) {
     const idRaw = document.getElementById('news-id')?.value || '';
     const title = (document.getElementById('news-title')?.value || '').trim();
     const image = (document.getElementById('news-image')?.value || '').trim();
-    const content = (document.getElementById('news-content')?.value || '').trim();
-    if (!title || !image || !content) {
+// LẤY NỘI DUNG TỪ EDITOR:
+    const content = quillEditor ? quillEditor.root.innerHTML : '';
+
+    if (!title || !image || !content || content === '<p><br></p>') {
         showToast('Vui lòng nhập đủ thông tin', 'error');
         return;
     }

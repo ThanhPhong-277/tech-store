@@ -131,8 +131,15 @@
             return div.innerHTML;
         }
 
+function stripHtml(html) {
+            // Xóa toàn bộ tag HTML để lấy chữ làm mô tả ngắn
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || '';
+        }
+
         function toExcerpt(text, maxLen) {
-            const t = String(text || '').replace(/\s+/g, ' ').trim();
+            const t = stripHtml(text).replace(/\s+/g, ' ').trim();
             if (!t) return '';
             return t.length > maxLen ? t.slice(0, maxLen - 1) + '…' : t;
         }
@@ -229,8 +236,11 @@
             img.style.backgroundImage = `url('${post.image}')`;
             meta.textContent = post.createdAt ? new Date(post.createdAt).toLocaleString('vi-VN') : '';
             title.textContent = post.title || '';
-            text.innerHTML = escapeHtml(post.content || '').replace(/\n/g, '<br>');
-
+            // text.innerHTML = escapeHtml(post.content || '').replace(/\n/g, '<br>');
+        
+        // Thêm dòng mới:
+        text.innerHTML = post.content || '';
+        
             overlay.style.display = 'block';
             modal.style.display = 'block';
             requestAnimationFrame(() => {

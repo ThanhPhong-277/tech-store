@@ -964,6 +964,7 @@ main {
     margin: 0;
 }
 .custom-price-filter input[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 
