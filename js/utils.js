@@ -194,3 +194,93 @@ function setupBackButton() {
 }
 
 document.addEventListener('DOMContentLoaded', setupBackButton);
+
+// --- BOT CHAT ZALO GIẢ LẬP TRÊN WEB ---
+function addZaloChatWidget() {
+    const zaloHTML = `
+        <div id="zalo-chat-container">
+            <div id="zalo-chat-box" class="zalo-chat-box">
+                <div class="zalo-chat-header">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" alt="Zalo">
+                    <div class="zalo-header-info">
+                        <strong>TechStore Support</strong>
+                        <span>Vừa mới truy cập</span>
+                    </div>
+                    <button id="zalo-close-btn">&times;</button>
+                </div>
+                <div id="zalo-chat-messages" class="zalo-chat-messages">
+                    <div class="chat-message bot-message">Chào bạn! Mình là trợ lý ảo của TechStore. Mình có thể giúp gì cho bạn?</div>
+                </div>
+                <div class="zalo-chat-input-area">
+                    <input type="text" id="zalo-chat-input" placeholder="Nhập tin nhắn..." autocomplete="off">
+                    <button id="zalo-send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <div id="zalo-chat-btn" class="zalo-chat-widget" style="cursor: pointer;">
+                <div class="zalo-icon-wrap">
+                    <div class="zalo-animation-bg"></div>
+                    <div class="zalo-animation-ring"></div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png" alt="Zalo Chat">
+                </div>
+                <span class="zalo-tooltip">Chat với chúng tôi!</span>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', zaloHTML);
+
+    // Gắn sự kiện đóng/mở chat
+    const chatBtn = document.getElementById('zalo-chat-btn');
+    const closeBtn = document.getElementById('zalo-close-btn');
+    const chatBox = document.getElementById('zalo-chat-box');
+    const sendBtn = document.getElementById('zalo-send-btn');
+    const chatInput = document.getElementById('zalo-chat-input');
+    const messagesContainer = document.getElementById('zalo-chat-messages');
+
+    chatBtn.addEventListener('click', () => {
+        chatBox.classList.add('active');
+        chatBtn.style.display = 'none'; // Ẩn nút Zalo khi khung chat mở lên
+    });
+
+    closeBtn.addEventListener('click', () => {
+        chatBox.classList.remove('active');
+        chatBtn.style.display = 'flex'; // Hiện lại nút Zalo
+    });
+
+    // Hàm gửi tin nhắn và Bot tự trả lời
+    function sendMessage() {
+        const text = chatInput.value.trim();
+        if(!text) return;
+
+        // 1. In tin nhắn của người dùng ra màn hình
+        messagesContainer.innerHTML += `<div class="chat-message user-message">${text}</div>`;
+        chatInput.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight; // Cuộn xuống cuối
+
+        // 2. Giả lập Bot "đang gõ" và trả lời sau 1.5 giây
+        setTimeout(() => {
+            // Danh sách các câu trả lời ngẫu nhiên của Bot
+            const replies = [
+                "Dạ vâng, TechStore đã nhận được thông tin của bạn ạ.",
+                "Bạn đợi một chút nhé, nhân viên tư vấn sẽ kiểm tra và hỗ trợ bạn ngay.",
+                "Dạ mẫu laptop này bên mình hiện đang có sẵn hàng tại chi nhánh TP.HCM ạ.",
+                "Bên mình đang có chương trình tặng balo ROG và chuột gaming đó ạ, bạn có muốn đặt luôn không?",
+                "Cảm ơn bạn quan tâm! Bạn có cần mình tư vấn thêm về cấu hình máy không ạ?",
+                "Dạ giá trên web là giá đã bao gồm VAT và ưu đãi rồi đó ạ."
+            ];
+            const randomReply = replies[Math.floor(Math.random() * replies.length)];
+            
+            messagesContainer.innerHTML += `<div class="chat-message bot-message">${randomReply}</div>`;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 1500);
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') sendMessage();
+    });
+}
+
+// Chạy hàm khi trang tải xong (nếu chưa có dòng này thì để nguyên)
+document.addEventListener('DOMContentLoaded', addZaloChatWidget);

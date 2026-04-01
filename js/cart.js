@@ -1,5 +1,7 @@
 // cart.js
 
+// cart.js
+
 function addToCart(productId, quantity, color = null) {
     const products = JSON.parse(localStorage.getItem('products')) || [];
     const product = products.find(p => p.id === productId);
@@ -24,10 +26,17 @@ function addToCart(productId, quantity, color = null) {
     if (existingIndex >= 0) {
         cart[existingIndex].quantity += quantity;
     } else {
+        // --- SỬA LOGIC TÍNH GIÁ Ở ĐÂY ---
+        // Lấy giá gốc cộng với giá phụ thu của màu sắc (nếu có)
+        const extraPrice = getColorExtraPrice(color);
+        const finalPrice = product.price + extraPrice;
+
         cart.push({
             id: productId,
             name: product.name,
-            price: product.price,
+            price: finalPrice, // Lưu giá đã cộng tiền màu
+            basePrice: product.price, // Lưu thêm giá gốc để tham chiếu nếu cần
+            extraPrice: extraPrice,   // Lưu thêm giá phụ thu
             image: product.image,
             quantity: quantity,
             color: color
@@ -102,6 +111,9 @@ function loadCart() {
             <tbody>
     `;
     cart.forEach((item, index) => {
+        // Hiển thị chú thích nếu màu này có cộng thêm tiền
+        const extraNote = item.extraPrice > 0 ? `<span style="font-size: 0.8em; color: #ff9900;"> (+${formatCurrency(item.extraPrice)})</span>` : '';
+        
         html += `
             <tr data-id="${item.id}" data-color="${item.color || ''}">
                 <td>
@@ -109,7 +121,7 @@ function loadCart() {
                         <img src="${item.image}" alt="${item.name}">
                         <div>
                             <h4>${item.name}</h4>
-                            ${item.color ? `<p>Màu: ${item.color}</p>` : ''}
+                            ${item.color ? `<p>Màu: ${item.color} ${extraNote}</p>` : ''}
                         </div>
                     </div>
                 </td>
@@ -520,4 +532,19 @@ function initStoreSelect() {
             detailDiv.innerHTML = '';
         }
     });
+}
+
+// Hàm quy định giá cộng thêm cho các màu đặc biệt
+function getColorExtraPrice(colorName) {
+    if (!colorName) return 0;
+    const extraPrices = {
+        'Trắng': 500000,
+        'White': 500000,
+        'Platinum White': 500000,
+        'Moonlight White': 500000,
+        'Red': 1000000,
+        'Volt Green': 500000,
+        'Electro Punk': 500000
+    };
+    return extraPrices[colorName] || 0; 
 }

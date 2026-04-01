@@ -1433,3 +1433,135 @@
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
 }
+
+/* ========================================================
+   KHUNG CHAT ZALO GIẢ LẬP
+   ======================================================== */
+.zalo-chat-box {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 350px;
+    height: 450px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    z-index: 10000;
+    
+    /* Hiệu ứng ẩn hiện */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+/* Khi có class active thì khung chat hiện lên */
+.zalo-chat-box.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Header khung chat */
+.zalo-chat-header {
+    background: #0068ff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.zalo-chat-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    padding: 2px;
+}
+
+.zalo-header-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.zalo-header-info span {
+    font-size: 0.8rem;
+    color: #e5e7eb;
+}
+
+#zalo-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* Thân chat (Chứa tin nhắn) */
+.zalo-chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #e2e8f0; /* Nền xám nhạt giống Zalo */
+}
+
+.chat-message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.bot-message {
+    background: #fff;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+.user-message {
+    background: #c6e2ff; /* Xanh nhạt */
+    color: #333;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+/* Khu vực nhập tin nhắn */
+.zalo-chat-input-area {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+    background: white;
+    border-radius: 0 0 10px 10px;
+}
+
+#zalo-chat-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+}
+
+#zalo-send-btn {
+    background: transparent;
+    border: none;
+    color: #0068ff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+#zalo-send-btn:hover {
+    color: #004ecc;
+}
