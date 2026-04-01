@@ -207,6 +207,24 @@ function openQuickView(product) {
     let totalInCart = cart.reduce((sum, item) => item.id === product.id ? sum + item.quantity : sum, 0);
     const isOutOfStock = product.stock <= 0;
 
+    // 1. --- PHẦN THÊM MỚI: TẠO GIAO DIỆN MÀU SẮC ---
+    let colorsHtml = '';
+    if (product.colors && product.colors.length > 0) {
+        colorsHtml = `
+        <div style="margin-bottom: 20px;">
+            <strong style="display: block; margin-bottom: 10px;">Màu sắc:</strong>
+            <div class="color-options" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                ${product.colors.map((c, idx) => `
+                    <span class="color-option ${idx === 0 ? 'selected' : ''}" data-color="${c}" style="background-color: ${colorNameToHex(c)}; display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 4px; cursor: pointer; border: 1px solid #ccc; color: #fff; text-shadow: 0px 0px 3px rgba(0,0,0,0.8); transition: all 0.2s;">
+                        ${c} <i class="fas fa-check tick-icon"></i>
+                    </span>
+                `).join('')}
+            </div>
+        </div>
+        `;
+    }
+    // -------------------------------------------------
+
     body.innerHTML = `
         <div style="display: grid; grid-template-columns: 1fr 1fr; background: white; border-radius: 8px;">
             <div style="padding: 20px; border-right: 1px solid #eee;">
@@ -222,6 +240,8 @@ function openQuickView(product) {
                 </div>
                 
                 ${!isOutOfStock ? `
+                
+                ${colorsHtml}
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
                     <strong>Số lượng:</strong>
                     <div style="display: flex; align-items: center; border: 1px solid #ccc; border-radius: 6px;">
@@ -244,31 +264,67 @@ function openQuickView(product) {
     modal.style.display = 'flex';
 
     if (!isOutOfStock) {
+
+        // 3. --- PHẦN THÊM MỚI: BẮT SỰ KIỆN CLICK ĐỔI MÀU SẮC ---
+        document.querySelectorAll('#quick-view-body .color-option').forEach(opt => {
+            opt.addEventListener('click', function () {
+                // Xóa chọn ở tất cả các nút
+                document.querySelectorAll('#quick-view-body .color-option').forEach(o => o.classList.remove('selected'));
+                // Chọn nút vừa click
+                this.classList.add('selected');
+            });
+        });
+
+        // Hàm tiện ích lấy màu đang được chọn
+        const getSelectedColor = () => {
+            const selectedOpt = document.querySelector('#quick-view-body .color-option.selected');
+            return selectedOpt ? selectedOpt.dataset.color : null;
+        };
+        // -----------------------------------------------------
+
         const qtyInput = document.getElementById('qv-qty');
         document.getElementById('qv-minus').onclick = () => { if (qtyInput.value > 1) qtyInput.value--; };
         document.getElementById('qv-plus').onclick = () => {
             if (parseInt(qtyInput.value) < product.stock - totalInCart) qtyInput.value++;
-            else showToast("Vượt quá số lượng trong kho", "warning");
+            else if (typeof showToast === 'function') showToast("Vượt quá số lượng trong kho", "warning");
         };
 
-        // Xử lý nút Mua ngay (Thêm và chuyển trang)
+        // 4. --- PHẦN ĐƯỢC SỬA: LẤY MÀU SẮC GỬI VÀO HÀM addToCart ---
         document.getElementById('qv-buy-now').onclick = () => {
             const qty = parseInt(qtyInput.value);
+            const color = getSelectedColor(); // Lấy màu
             if (typeof addToCart === 'function') {
-                addToCart(product.id, qty);
-                window.location.href = 'cart.html'; // Chuyển tới giỏ hàng
+                addToCart(product.id, qty, color); // Gửi thêm biến color
+                window.location.href = 'cart.html'; 
             }
         };
 
-        // Xử lý nút Thêm vào giỏ (Chỉ thêm, không chuyển trang)
         document.getElementById('qv-add-cart').onclick = () => {
             const qty = parseInt(qtyInput.value);
+            const color = getSelectedColor(); // Lấy màu
             if (typeof addToCart === 'function') {
-                addToCart(product.id, qty);
-                showToast("Đã thêm vào giỏ hàng", "success");
-                modal.style.display = 'none'; // Đóng popup
+                addToCart(product.id, qty, color); // Gửi thêm biến color
+                if (typeof showToast === 'function') showToast("Đã thêm vào giỏ hàng", "success");
+                modal.style.display = 'none'; 
             }
         };
+        // ---------------------------------------------------------
     }
-    document.getElementById('quick-view-close').onclick = () => modal.style.display = 'none';
+    
+    // Sửa lỗi: đảm bảo nút đóng hoạt động (bạn đang dùng hàm document.getElementById nhưng ở trang này có thể dùng selector)
+    const closeBtn = document.getElementById('quick-view-close') || document.querySelector('.close-modal');
+    if(closeBtn) closeBtn.onclick = () => modal.style.display = 'none';
+}
+
+function colorNameToHex(name) {
+    const map = { 
+        'Đen': '#000000', 'Black': '#000000', 'Off Black': '#1a1a1a', 'Original Black': '#000000', 'Eclipse Gray': '#4a4a4a', 
+        'Trắng': '#FFFFFF', 'White': '#FFFFFF', 'Platinum White': '#f5f5f5', 'Moonlight White': '#f0f0f0',
+        'Xám': '#808080', 'Silver': '#c0c0c0', 'Armor Titanium': '#878681', 'Grey': '#808080',
+        'Đỏ': '#FF0000', 'Red': '#FF0000', 
+        'Xanh': '#0000FF', 
+        'Vàng': '#FFFF00', 'Volt Green': '#caff00',
+        'Electro Punk': '#ff007f'
+    };
+    return map[name] || '#CCCCCC';
 }

@@ -1001,3 +1001,21 @@ main {
     background: #ff4d4d;
     /* Đổi màu đỏ ROG khi hover */
 }
+
+/* Ẩn dấu tick mặc định trên các nút màu */
+.color-option .tick-icon {
+    display: none;
+    margin-left: 6px;
+    font-size: 0.9em;
+}
+
+/* Chỉ hiện dấu tick ở màu đang được thêm class 'selected' */
+.color-option.selected .tick-icon {
+    display: inline-block;
+}
+
+/* (Tùy chọn) Thêm viền nổi bật cho màu đang được chọn */
+.color-option.selected {
+    border: 2px solid #ff4646; /* Màu đỏ đặc trưng của ROG hoặc màu bạn thích */
+    font-weight: bold;
+}
