@@ -717,19 +717,63 @@ function viewOrderDetail(orderId) {
     modal.style.display = 'flex';
     modal.querySelector('.close-modal').onclick = () => modal.style.display = 'none';
 }
-
 function updateOrderStatus(orderId, newStatus) {
     const orders = JSON.parse(localStorage.getItem('orders')) || [];
     const index = orders.findIndex(o => o.id == orderId);
     if (index === -1) return;
 
+    const order = orders[index];
+    const oldStatus = order.status;
+
+    // Nếu trạng thái không thay đổi thì không làm gì cả
+    if (oldStatus === newStatus) return; 
+
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+
+    // LOGIC 1: Khi Admin "HỦY" hoặc "TỪ CHỐI" đơn hàng -> Tự động trả lại số lượng vào kho
+    if ((newStatus === 'cancelled' || newStatus === 'rejected') && (oldStatus !== 'cancelled' && oldStatus !== 'rejected')) {
+        order.items.forEach(item => {
+            const prod = products.find(p => p.id === item.id);
+            if (prod) prod.stock += item.quantity; // Cộng lại hàng vào kho
+        });
+        localStorage.setItem('products', JSON.stringify(products));
+    } 
+    // LOGIC 2: Khi Admin "Hồi sinh" đơn bị hủy (chuyển sang Đã duyệt/Đang xử lý) -> Trừ lại tồn kho
+    else if ((oldStatus === 'cancelled' || oldStatus === 'rejected') && (newStatus !== 'cancelled' && newStatus !== 'rejected')) {
+        
+        // Kiểm tra xem trong kho còn đủ hàng để "hồi sinh" đơn này không
+        let canRestore = true;
+        order.items.forEach(item => {
+            const prod = products.find(p => p.id === item.id);
+            if (!prod || prod.stock < item.quantity) canRestore = false;
+        });
+
+        // Nếu kho hết hàng thì báo lỗi, chặn không cho duyệt đơn
+        if (!canRestore) {
+            if (typeof showToast === 'function') showToast('Không thể duyệt đơn! Sản phẩm này hiện đã hết hàng trong kho.', 'error');
+            // Reset lại dropdown về trạng thái cũ
+            loadOrdersSection(); 
+            return; 
+        }
+
+        // Nếu đủ hàng thì trừ kho bình thường
+        order.items.forEach(item => {
+            const prod = products.find(p => p.id === item.id);
+            if (prod) prod.stock -= item.quantity;
+        });
+        localStorage.setItem('products', JSON.stringify(products));
+    }
+
+    // Cập nhật trạng thái mới cho đơn hàng
     orders[index].status = newStatus;
     orders[index].updatedAt = new Date().toISOString();
     localStorage.setItem('orders', JSON.stringify(orders));
 
-    showToast(`Đã cập nhật trạng thái đơn hàng #${orderId}`, 'success');
+    if (typeof showToast === 'function') showToast(`Đã duyệt trạng thái đơn hàng #${orderId}`, 'success');
+    
+    // Tải lại bảng để cập nhật màu sắc trạng thái
     loadOrdersSection();
-}
+} 
 
 // Hàm phụ trợ
 function getPaymentMethodText(method) {
