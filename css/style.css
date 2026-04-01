@@ -1019,3 +1019,234 @@ main {
     border: 2px solid #ff4646; /* Màu đỏ đặc trưng của ROG hoặc màu bạn thích */
     font-weight: bold;
 }
+
+/* ========================================================
+   GIAO DIỆN BOT CHAT ZALO GIẢ LẬP
+   ======================================================== */
+
+#zalo-chat-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 10000; /* Đảm bảo luôn nổi lên trên cùng */
+}
+
+/* Nút Zalo tròn nổi */
+.zalo-chat-widget {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.zalo-icon-wrap {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.zalo-icon-wrap img {
+    width: 45px;
+    height: 45px;
+    z-index: 3;
+    border-radius: 50%;
+    object-fit: contain;
+    background-color: #fff;
+}
+
+.zalo-animation-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #0068ff;
+    border-radius: 50%;
+    z-index: 1;
+    animation: zalo-pulse 1.5s infinite;
+}
+
+.zalo-animation-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #0068ff;
+    border-radius: 50%;
+    z-index: 2;
+    animation: zalo-ring 1.5s infinite;
+}
+
+/* Tooltip "Chat với chúng tôi" */
+.zalo-tooltip {
+    position: absolute;
+    right: 70px;
+    background: #0068ff;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.zalo-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -6px;
+    transform: translateY(-50%);
+    border-width: 6px 0 6px 6px;
+    border-style: solid;
+    border-color: transparent transparent transparent #0068ff;
+}
+
+.zalo-chat-widget:hover .zalo-tooltip {
+    opacity: 1;
+    visibility: visible;
+    right: 80px;
+}
+
+/* Animations */
+@keyframes zalo-pulse {
+    0% { transform: scale(0.9); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.9; }
+    100% { transform: scale(0.9); opacity: 1; }
+}
+
+@keyframes zalo-ring {
+    0% { transform: scale(0.9); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Khung chat chữ nhật */
+.zalo-chat-box {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 350px;
+    height: 450px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    
+    /* Ẩn hiện mượt mà */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+/* Kích hoạt hiển thị khung chat */
+.zalo-chat-box.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.zalo-chat-header {
+    background: #0068ff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.zalo-chat-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    padding: 2px;
+}
+
+.zalo-header-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.zalo-header-info span {
+    font-size: 0.8rem;
+    color: #e5e7eb;
+}
+
+#zalo-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.zalo-chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #e2e8f0;
+}
+
+.chat-message {
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.bot-message {
+    background: #fff;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+.user-message {
+    background: #c6e2ff;
+    color: #333;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.zalo-chat-input-area {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+    background: white;
+    border-radius: 0 0 10px 10px;
+}
+
+#zalo-chat-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+}
+
+#zalo-send-btn {
+    background: transparent;
+    border: none;
+    color: #0068ff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+#zalo-send-btn:hover {
+    color: #004ecc;
+}
