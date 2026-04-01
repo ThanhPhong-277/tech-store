@@ -1593,3 +1593,95 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// ==================== QUẢN LÝ GIÁ MÀU SẮC (SETTINGS) ====================
+
+// 1. Hàm load danh sách giá màu ra bảng
+function loadColorPrices() {
+    const tbody = document.getElementById('color-price-list');
+    if (!tbody) return;
+
+    let colorPrices = JSON.parse(localStorage.getItem('colorPrices'));
+    if (!colorPrices) {
+        colorPrices = {
+            'Trắng': 500000, 'White': 500000, 'Platinum White': 500000, 'Moonlight White': 500000,
+            'Red': 1000000, 'Volt Green': 500000, 'Electro Punk': 500000
+        };
+        localStorage.setItem('colorPrices', JSON.stringify(colorPrices));
+    }
+
+    let html = '';
+    for (const [color, price] of Object.entries(colorPrices)) {
+        html += `
+            <tr>
+                <td><strong>${color}</strong></td>
+                <td style="color: #e02424; font-weight: bold;">+${formatCurrency(price)}</td>
+                <td style="text-align: center;">
+                    <button class="btn btn-sm btn-outline edit-color-price" data-color="${color}" data-price="${price}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-color-price" data-color="${color}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }
+    tbody.innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Chưa có dữ liệu màu nào</td></tr>';
+}
+
+// 2. Bắt sự kiện Lưu Form (Thêm / Sửa)
+document.addEventListener('submit', function(e) {
+    if (e.target.id === 'color-price-form') {
+        e.preventDefault();
+        const name = document.getElementById('cp-name').value.trim();
+        const price = parseInt(document.getElementById('cp-price').value) || 0;
+
+        if (!name) return;
+
+        let colorPrices = JSON.parse(localStorage.getItem('colorPrices')) || {};
+        colorPrices[name] = price; // Ghi đè hoặc thêm mới
+        localStorage.setItem('colorPrices', JSON.stringify(colorPrices));
+
+        if (typeof showToast === 'function') showToast('Đã lưu cấu hình giá màu sắc!', 'success');
+        document.getElementById('color-price-form').reset();
+        loadColorPrices(); // Tải lại bảng
+    }
+});
+
+// 3. Bắt sự kiện Sửa / Xóa trên bảng màu
+document.addEventListener('click', function(e) {
+    // Xóa màu
+    const deleteBtn = e.target.closest('.delete-color-price');
+    if (deleteBtn) {
+        const color = deleteBtn.dataset.color;
+        if (confirm(`Bạn có chắc muốn xóa cấu hình giá của màu "${color}"?`)) {
+            let colorPrices = JSON.parse(localStorage.getItem('colorPrices')) || {};
+            delete colorPrices[color];
+            localStorage.setItem('colorPrices', JSON.stringify(colorPrices));
+            if (typeof showToast === 'function') showToast('Đã xóa màu', 'success');
+            loadColorPrices();
+        }
+    }
+
+    // Đưa dữ liệu lên form để Sửa
+    const editBtn = e.target.closest('.edit-color-price');
+    if (editBtn) {
+        document.getElementById('cp-name').value = editBtn.dataset.color;
+        document.getElementById('cp-price').value = editBtn.dataset.price;
+        window.scrollTo({ top: document.getElementById('color-price-form').offsetTop - 50, behavior: 'smooth' });
+    }
+});
+
+// 4. Kích hoạt tự động Load khi vào tab Cài đặt
+document.addEventListener('click', function(e) {
+    const menuItem = e.target.closest('.menu-item');
+    if (menuItem && menuItem.dataset.section === 'settings') {
+        loadColorPrices();
+    }
+});
+
+// Load ngay lần đầu nếu đang ở trang Settings
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(loadColorPrices, 500);
+});

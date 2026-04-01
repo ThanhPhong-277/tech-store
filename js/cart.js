@@ -534,17 +534,19 @@ function initStoreSelect() {
     });
 }
 
-// Hàm quy định giá cộng thêm cho các màu đặc biệt
+// Hàm lấy giá cộng thêm từ LocalStorage (Có thể quản lý trong Admin)
 function getColorExtraPrice(colorName) {
     if (!colorName) return 0;
-    const extraPrices = {
-        'Trắng': 500000,
-        'White': 500000,
-        'Platinum White': 500000,
-        'Moonlight White': 500000,
-        'Red': 1000000,
-        'Volt Green': 500000,
-        'Electro Punk': 500000
-    };
-    return extraPrices[colorName] || 0; 
+    
+    // Lấy danh sách giá màu từ bộ nhớ, nếu chưa có thì tạo danh sách mặc định
+    let colorPrices = JSON.parse(localStorage.getItem('colorPrices'));
+    if (!colorPrices) {
+        colorPrices = {
+            'Trắng': 500000, 'White': 500000, 'Platinum White': 500000, 'Moonlight White': 500000,
+            'Red': 1000000, 'Volt Green': 500000, 'Electro Punk': 500000
+        };
+        localStorage.setItem('colorPrices', JSON.stringify(colorPrices));
+    }
+    
+    return parseInt(colorPrices[colorName]) || 0; 
 }

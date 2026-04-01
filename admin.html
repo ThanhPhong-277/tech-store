@@ -714,6 +714,36 @@
 
                 <!-- Cài đặt -->
                 <div id="settings-section" class="admin-section">
+                    <div class="settings-card"
+                        style="margin-top: 20px; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <h3
+                            style="margin-bottom: 10px; border-bottom: 2px solid #ffcc00; display: inline-block; padding-bottom: 5px;">
+                            Quản lý Giá Cộng Thêm Bảng Màu</h3>
+                        <p style="margin-bottom: 20px; color: #666;">Thiết lập số tiền sẽ cộng thêm vào giá gốc khi
+                            khách hàng chọn các màu đặc biệt (Ví dụ: White, Red...). Các màu không có trong danh sách sẽ
+                            mặc định cộng 0đ.</p>
+
+                        <form id="color-price-form" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                            <input type="text" id="cp-name" placeholder="Tên màu (VD: Platinum White)"
+                                class="form-control" required style="flex: 1;">
+                            <input type="number" id="cp-price" placeholder="Giá cộng thêm (VD: 500000)"
+                                class="form-control" required style="flex: 1;" min="0">
+                            <button type="submit" class="btn btn-primary" style="white-space: nowrap;"><i
+                                    class="fas fa-save"></i> Lưu thiết lập</button>
+                        </form>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tên màu sắc</th>
+                                    <th>Số tiền cộng thêm (VNĐ)</th>
+                                    <th style="width: 100px; text-align: center;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="color-price-list">
+                            </tbody>
+                        </table>
+                    </div>
                     <div class="flex justify-between items-end mb-8 border-b border-outline-variant/30 pb-4">
                         <div>
                             <h2 class="font-headline text-3xl font-bold text-white tracking-widest uppercase">SYSTEM
